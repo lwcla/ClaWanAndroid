@@ -1,0 +1,27 @@
+plugins {
+    id 'com.android.library'
+}
+
+apply from: '../common_component_build.gradle'
+
+def config = rootProject.ext
+
+android {
+    buildTypes {
+        release {
+            buildConfigField "String", "MODULE_NAME", '"通用工具模块"'
+        }
+
+        debug {
+            buildConfigField "String", "MODULE_NAME", '"通用工具模块"'
+        }
+    }
+}
+
+dependencies {
+    api config.glide
+    kapt config.glide_compiler
+    api config.mmkv
+    api config.androidUtilCode
+    implementation config.ultimatebarx
+}

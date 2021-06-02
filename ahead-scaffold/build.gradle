@@ -1,0 +1,23 @@
+plugins {
+    id 'com.android.library'
+}
+
+apply from: '../common_component_build.gradle'
+
+def config = rootProject.ext
+
+android {
+    buildTypes {
+        release {
+            buildConfigField "String", "MODULE_NAME", '"界面框架"'
+        }
+        debug {
+            buildConfigField "String", "MODULE_NAME", '"界面框架"'
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':ahead-utils')
+    implementation project(path: ':ahead-base')
+}

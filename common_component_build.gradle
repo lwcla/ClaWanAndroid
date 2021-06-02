@@ -1,0 +1,105 @@
+//def componentName = project.getName().startsWith("module_") ? project.getName().substring(0, "module_".length()) :
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def config = rootProject.ext
+
+android {
+    compileSdkVersion config.android.compileSdkVersion
+    buildToolsVersion config.android.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion config.android.minSdkVersion
+        targetSdkVersion config.android.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+                arguments = [moduleName: project.getName()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "BUILD_HASH", "\"${getGitHash()}\""
+
+            buildConfigField "boolean", "IS_DEBUG", "false"
+            buildConfigField "boolean", "IS_BUILD_MODULE", "true"
+            zipAlignEnabled true     //Zipalign优化
+            shrinkResources false    // 移除无用的resource文件
+            minifyEnabled false     //混淆
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "BUILD_HASH", "\"${getGitHash()}\""
+
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "IS_BUILD_MODULE", "true"
+            zipAlignEnabled true     //Zipalign优化
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    dataBinding {
+        enabled = true
+    }
+    buildFeatures {
+        viewBinding true
+    }
+//    sourceSets {
+//        main {
+//            //isBuildModule为true时模块构建为独立app  为false时打包进宿主app
+//             manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+//        }
+//    }
+}
+
+kapt {
+    arguments {
+        arg("AROUTER_MODULE_NAME", project.getName())
+        arg("moduleName", project.getName())
+    }
+}
+
+dependencies {
+    implementation config.kotlin_stdlib
+    implementation config.core_ktx
+    implementation config.core_ktx_coroutines
+    implementation config.core_ktx_coroutines_android
+    implementation config.appcompat
+    implementation config.material
+    testImplementation config.android_junit
+    androidTestImplementation config.test_ext_junit
+    androidTestImplementation config.test_espresso_core
+
+    implementation config.alibaba_arouter_api
+    kapt config.alibaba_arouter_compiler
+}
+
+

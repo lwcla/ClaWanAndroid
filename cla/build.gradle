@@ -1,0 +1,67 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+def config = rootProject.ext
+
+android {
+    compileSdkVersion config.android.compileSdkVersion
+    buildToolsVersion config.android.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.cla.wan.android"
+        minSdkVersion config.android.minSdkVersion
+        targetSdkVersion config.android.targetSdkVersion
+        versionCode timeStampVerCode()
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+
+kapt {
+    arguments {
+        arg("AROUTER_MODULE_NAME", project.getName())
+    }
+}
+
+dependencies {
+
+    implementation config.kotlin_stdlib
+    implementation config.core_ktx
+    implementation config.appcompat
+    implementation config.material
+    implementation config.constraintlayout
+    testImplementation config.android_junit
+    androidTestImplementation config.test_ext_junit
+    androidTestImplementation config.test_espresso_core
+
+    implementation config.alibaba_arouter_api
+    kapt config.alibaba_arouter_compiler
+
+    implementation project(path: ':ahead-utils')
+    implementation project(path: ':ahead-base')
+    implementation project(path: ':ahead-scaffold')
+}
+
+static def timeStampVerCode() {
+    def now = (int) (System.currentTimeMillis() / (12 * 60 * 60 * 1000))
+    return now
+}

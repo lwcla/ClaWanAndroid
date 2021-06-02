@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MainActivityStyle" parent="Theme.ClaWanAndroid">
+        <item name="android:background">@drawable/splash</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="statusBarBackground">@color/transparent</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--   <item name="android:windowBackground">@color/transparent</item>
+           <item name="android:windowIsTranslucent">true</item>-->
+    </style>
+
+    <style name="MainActivityStyleNormal" parent="Theme.ClaWanAndroid">
+        <item name="android:background">@color/transparent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="statusBarBackground">@color/transparent</item>
+        <item name="android:windowFullscreen">false</item>
+        <!--   <item name="android:windowBackground">@color/transparent</item>
+           <item name="android:windowIsTranslucent">true</item>-->
+    </style>
+
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    android:attr/progressBarStyleLarge-->
+    <style name="MyContentProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:colorAccent" tools:targetApi="lollipop">@color/teal_700</item>
+    </style>
+
+</resources>

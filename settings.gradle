@@ -1,0 +1,5 @@
+rootProject.name = "Cla-WanAndroid"
+include ':cla'
+include ':ahead-utils'
+include ':ahead-base'
+include ':ahead-scaffold'
