@@ -22,7 +22,6 @@ dependencies {
 
     implementation config.gson
     implementation config.eventbus_live
-    implementation config.screen_auto_size
 
     api config.lifecycle_viewModelScope
     api config.lifecycle_lifeCycleScope

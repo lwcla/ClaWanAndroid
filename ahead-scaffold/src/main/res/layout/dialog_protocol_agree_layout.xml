@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_white_radius_10dp"
+    tools:ignore="MissingDefaultResource">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:text="@string/user_protocol_privacy_protocol_tips"
+        android:textColor="@color/c4"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewTop"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@color/c8"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:lineHeight="20dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="18dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:scrollbarThumbVertical="@color/c8"
+        android:scrollbarTrackVertical="@null"
+        android:scrollbars="vertical"
+        android:text="@string/protocol_tips_des"
+        android:textColor="@color/c4"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/viewLine"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        tools:ignore="UnusedAttribute" />
+
+    <View
+        android:id="@+id/viewLine"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/c8"
+        app:layout_constraintBottom_toTopOf="@id/tvRefuse" />
+
+    <com.cla.wan.utils.widget.AlphaTextView
+        android:id="@+id/tvRefuse"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/not_agree"
+        android:textColor="@color/c5"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvAgree"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tvAgree"
+        app:layout_constraintTop_toBottomOf="@id/tvContent" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="50dp"
+        android:background="@color/c8"
+        app:layout_constraintBottom_toBottomOf="@id/tvAgree"
+        app:layout_constraintLeft_toRightOf="@id/tvRefuse"
+        app:layout_constraintRight_toLeftOf="@id/tvAgree"
+        app:layout_constraintTop_toTopOf="@id/tvAgree" />
+
+    <com.cla.wan.utils.widget.AlphaTextView
+        android:id="@+id/tvAgree"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/agree"
+        android:textColor="@color/c4"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tvRefuse"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvContent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,9 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ContentLoadingProgressBar
 import com.cla.wan.base.R
+import com.cla.wan.base.utils.setC1
+import com.cla.wan.utils.app.AppUtils.dp2px
+import com.cla.wan.utils.app.colorValue
 
 /**
  * 加载数据
@@ -211,11 +214,11 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
         loadingView = RelativeLayout(context).apply {
             val ctx = ContextThemeWrapper(context, R.style.MyContentProgressBar)
             addView(ContentLoadingProgressBar(ctx).apply {
-                val size = /*context.dp2px(44)*/44
+                val size = dp2px(44)
                 val params = RelativeLayout.LayoutParams(size, size)
                 params.addRule(RelativeLayout.CENTER_IN_PARENT)
                 layoutParams = params
-//                setC1(context)
+                setC1(context)
 
                 isClickable = false
                 isFocusable = false
@@ -243,14 +246,14 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
             addView(TextView(context).apply {
                 layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
-//                val errorDrawable =
-//                    ContextCompat.getDrawable(context, R.mipmap.placeholder_empty_net)
-//                compoundDrawablePadding = context.dp2px(20)
-//                setCompoundDrawablesRelativeWithIntrinsicBounds(null, errorDrawable, null, null)
+                val errorDrawable =
+                    ContextCompat.getDrawable(context, R.mipmap.placeholder_empty_net)
+                compoundDrawablePadding = dp2px(20)
+                setCompoundDrawablesRelativeWithIntrinsicBounds(null, errorDrawable, null, null)
 
                 text = "数据加载失败，点我重试"
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-                setTextColor(ContextCompat.getColor(context, R.color.black))
+                setTextColor(context.colorValue(R.color.black))
             })
         }
     }
@@ -272,7 +275,7 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
             text = "网络未连接，请检查网络"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
             gravity = Gravity.CENTER
-            setTextColor(ContextCompat.getColor(context, R.color.black))
+            setTextColor(context.colorValue(R.color.black))
             this
         }
     }
@@ -293,7 +296,7 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
         emptyView = with(TextView(context)) {
             text = "这里没有数据"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-            setTextColor(ContextCompat.getColor(context, R.color.black))
+            setTextColor(context.colorValue(R.color.black))
             gravity = Gravity.CENTER
             this
         }

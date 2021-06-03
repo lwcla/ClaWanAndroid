@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Cla-WanAndroid</string>
+
+    <string name="list_empty_tip">暂无数据</string>
+    <string name="load_failure_simple">加载失败</string>
+    <string name="user_protocol_privacy_protocol_tips">用户协议与隐私政策提示</string>
+    <string name="protocol_tips_des">感谢您信任并使用使用。
+        \n我们将依据最新的法律法规、监管政策要求，更新了独立的用户协议和隐私协议，特向您推送本提示。请您仔细阅读并充分理解相关条款。
+        \n\n您点击“同意”，即代表您已阅读并同意上述协议条款，我们将尽全力保障您的合法权益并继续为您提供优质的服务，如您点击“不同意”，将可能导致无法继续使用我们的产品和服务。
+        \n\n您可通过阅读完整版《用户协议》和《隐私协议》了解详尽的条款内容。
+    </string>
+    <string name="not_agree">不同意</string>
+    <string name="agree">同意</string>
+    <string name="user_protocol_name">《用户协议》</string>
+    <string name="privacy_policy_name">《隐私协议》</string>
+    <string name="now_into_go">立即进入 GO</string>
 </resources>

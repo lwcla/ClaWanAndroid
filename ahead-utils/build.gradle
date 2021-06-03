@@ -24,4 +24,6 @@ dependencies {
     api config.mmkv
     api config.androidUtilCode
     implementation config.ultimatebarx
+
+    api config.screen_auto_size
 }

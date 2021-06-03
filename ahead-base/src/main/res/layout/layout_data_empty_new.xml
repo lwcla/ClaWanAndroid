@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_no_data"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <com.cla.wan.base.widget.SimpleTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:clickable="false"
+        android:drawablePadding="12dp"
+        android:focusable="false"
+        android:gravity="center"
+        android:text="@string/list_empty_tip"
+        android:textColor="@color/c6"
+        app:drawableTopCompat="@mipmap/placeholder_empty_order" />
+
+</RelativeLayout>

@@ -4,8 +4,16 @@
 
     <application>
 
+        <meta-data
+            android:name="com.cla.scaffold.LifeCycleInjector"
+            android:value="@string/lifecycle_proxy" />
+
+        <meta-data
+            android:name="com.cla.scaffold.BuildConfig"
+            android:value="@string/module_info" />
+
         <activity
-            android:name=".MainAty"
+            android:name=".ui.MainAty"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -16,6 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.GuideAty"
+            android:theme="@style/GuideActivityStyle" />
 
     </application>
 </manifest>

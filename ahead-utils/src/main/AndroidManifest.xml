@@ -2,4 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cla.wan.utils">
 
+    <application>
+
+        <meta-data
+            android:name="com.cla.wan.utils.LifeCycleInjector"
+            android:value="@string/lifecycle_proxy" />
+
+        <meta-data
+            android:name="com.cla.wan.utils.BuildConfig"
+            android:value="@string/module_info" />
+
+    </application>
+
 </manifest>

@@ -2,8 +2,8 @@ package com.cla.wan.base
 
 import android.app.Application
 import android.content.Context
-import cn.fhstc.utils.proxy.AppProxy
-import cn.fhstc.utils.proxy.IAppLifeCycle
+import com.cla.wan.utils.proxy.AppProxy
+import com.cla.wan.utils.proxy.IAppLifeCycle
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -12,10 +12,14 @@ import kotlinx.coroutines.launch
 class App : Application() {
 
     companion object {
-        private lateinit var context: App
-        fun instance() = context
+        private lateinit var app: App
+        val instance: Application
+            get() = app
 
-        private var foreground = false
+        val appContext: Context
+            get() = app.applicationContext
+
+        var foreground = false
 
         /**
          * app是否在前台
@@ -45,7 +49,7 @@ class App : Application() {
 
     @DelicateCoroutinesApi
     override fun onCreate() {
-        context = this
+        app = this
         super.onCreate()
         appProxy.onCreate(this)
 
