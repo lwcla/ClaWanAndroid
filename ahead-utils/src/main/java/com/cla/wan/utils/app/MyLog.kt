@@ -1,7 +1,8 @@
-package com.cla.wan.utils.config
+package com.cla.wan.utils.app
 
 import android.util.Log
 import com.cla.wan.utils.BuildConfig
+import com.cla.wan.utils.config.UtilsConfig
 
 object MyLog {
 

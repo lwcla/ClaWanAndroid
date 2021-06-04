@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.cla.wan.utils.LifeCycleInjector
-import com.cla.wan.utils.config.MyLog
+import com.cla.wan.utils.app.MyLog
 import com.tencent.mmkv.MMKV
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

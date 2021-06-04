@@ -19,11 +19,18 @@ android {
 }
 
 dependencies {
-    api config.glide
+    implementation config.glide
     kapt config.glide_compiler
-    api config.mmkv
-    api config.androidUtilCode
+
+    implementation config.mmkv
     implementation config.ultimatebarx
 
+    api config.androidUtilCode
     api config.screen_auto_size
+    api config.retrofit2
+    api config.retrofit2_gson
+
+    implementation config.room_runtime
+    implementation config.room_ktx
+    kapt config.room_compiler
 }

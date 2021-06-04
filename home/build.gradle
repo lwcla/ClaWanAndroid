@@ -18,6 +18,8 @@ android {
 }
 
 dependencies {
+    implementation config.banner
+
     implementation project(path: ':ahead-utils')
     implementation project(path: ':ahead-base')
 }

@@ -42,6 +42,18 @@ object ARouterUtil {
      *
      * @param path `path`
      */
+    fun navigation(path: String?): Any? {
+        val aRouter = getARouter() ?: return null
+        return aRouter.build(path).navigation()
+    }
+
+    /**
+     * 使用 [ARouter] 根据 `path` 跳转到对应的页面, 这个方法因为没有使用 [Activity]跳转
+     * 所以 [ARouter] 会自动给 [android.content.Intent] 加上 Intent.FLAG_ACTIVITY_NEW_TASK
+     * 如果不想自动加上这个 Flag 请使用 [ARouter.getInstance] 并传入 [Activity]
+     *
+     * @param path `path`
+     */
     inline fun navigation(
         activity: Activity?,
         path: String,

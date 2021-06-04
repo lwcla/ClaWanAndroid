@@ -141,6 +141,7 @@ class MainAty : BaseAty() {
 //        }
 
         initView()
+        initView()
     }
 
     private fun initView() {
