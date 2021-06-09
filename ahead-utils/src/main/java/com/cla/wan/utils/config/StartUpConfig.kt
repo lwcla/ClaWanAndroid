@@ -12,7 +12,7 @@ abstract class StartUpConfig : IProvider {
     companion object {
         val impl by lazy {
             try {
-                ARouterUtil.navigation(UtilsPath.START_UP_CONFIG_IMPL) as? StartUpConfig?
+                ARouterUtil.navigation(HostPath.START_UP_CONFIG_IMPL) as? StartUpConfig?
             } catch (e: Exception) {
                 null
             } ?: ARouterUtil.navigation(UtilsPath.START_UP_CONFIG_DEFAULT_IMPL) as StartUpConfig

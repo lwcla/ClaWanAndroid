@@ -1,12 +1,16 @@
 package com.cla.wan.utils.net
 
-import com.cla.wan.utils.config.ModuleInfoHelper
+import androidx.lifecycle.liveData
+import com.cla.wan.utils.app.AppUtils
+import com.cla.wan.utils.app.MyLog
+import com.cla.wan.utils.app.showToast
+import com.cla.wan.utils.config.ServiceAddressHelper
 import com.cla.wan.utils.config.StartUpConfig
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.await
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.ref.WeakReference
 import java.security.SecureRandom
@@ -14,11 +18,84 @@ import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import javax.net.ssl.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
-private typealias GetBaseUrl = () -> String
+enum class RetrofitType {
+    NORMAL,  //只从网络读取数据
+    CACHE,   //从网络读取数据，如果连接失败，那么读取缓存数据
+    FORCE_CACHE //只从缓存读取数据
+}
+
+enum class ResourceState {
+    Loading, Failure, Success
+}
+
+data class Resource<T>(
+    val state: ResourceState,
+    val data: T?,
+    val code: Int = 0,
+    val message: String? = null
+) {
+    companion object {
+
+        fun <T> loading() = Resource<T>(ResourceState.Loading, null, code = 0)
+
+        fun <T> failure(message: String? = null) =
+            Resource<T>(ResourceState.Failure, null, code = 0, message = message)
+
+        fun <T> success(data: T, code: Int) =
+            Resource(ResourceState.Success, data = data, code = code)
+    }
+}
+
+inline fun <reified S, reified T : Any> fire(
+    forceCache: Boolean = false,
+    cache: Boolean = true,
+    baseUrl: String = "",
+    crossinline block: suspend S.() -> Call<T>
+) = liveData(Dispatchers.IO) {
+
+    //返回loading信息
+    emit(Resource.loading<T>())
+
+    val errorInfo = try {
+        if (forceCache) {
+            val forceCacheService =
+                RetrofitManager.createService<S>(RetrofitType.FORCE_CACHE, baseUrl)
+            try {
+                val data = block(forceCacheService).await()
+                //这是从缓存中读取的数据，先返回让ui显示出来
+                emit(Resource.success(data, code = 200))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        val service = if (cache) {
+            //这个会去读取网络数据，如果失败，则读取缓存数据
+            RetrofitManager.createService<S>(RetrofitType.CACHE, baseUrl)
+        } else {
+            //这个只会从网络读取数据
+            RetrofitManager.createService<S>(RetrofitType.NORMAL, baseUrl)
+        }
+
+        try {
+            val data = block(service).await()
+            emit(Resource.success(data, code = 200))
+            return@liveData
+        } catch (e: Exception) {
+            e.printStackTrace()
+            e.message
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        e.message
+    }
+
+    errorInfo?.showToast(tag = "Net Error")
+    MyLog.d(javaClass.name, "fire errorInfo=$errorInfo")
+    emit(Resource.failure<T>(message = errorInfo))
+}
 
 /**
  * @author  zhouyufei
@@ -26,11 +103,6 @@ private typealias GetBaseUrl = () -> String
  * @version 1.0
  */
 object RetrofitManager {
-
-//    init {
-//        ServerAddressModel().init()
-//    }
-
     private val retrofitMap by lazy { RetrofitMap() }
 
     inline fun <reified T> createService(
@@ -38,6 +110,7 @@ object RetrofitManager {
         baseUrl: String = ""
     ): T {
         val pair = getServiceMap(type, baseUrl)
+        println("lwl RetrofitManager.createService pair=$pair")
         return getService(pair.first, pair.second)
     }
 
@@ -62,25 +135,6 @@ object RetrofitManager {
         }
 
         return serviceClass!! as T
-    }
-
-    suspend fun <T> Call<T>.await() = suspendCoroutine<T?> { cont ->
-
-        enqueue(object : Callback<T> {
-            override fun onResponse(call: Call<T>, response: Response<T>) {
-                val body = response.body()
-                if (body == null) {
-                    cont.resume(null)
-                    return
-                }
-
-                cont.resume(body)
-            }
-
-            override fun onFailure(call: Call<T>, t: Throwable) {
-                cont.resumeWithException(t)
-            }
-        })
     }
 
     /**
@@ -178,23 +232,17 @@ private class RetrofitMap {
     private val retrofitMap by lazy {
         mutableMapOf<String, MutableMap<RetrofitType, Pair<Retrofit, MutableMap<Class<*>, WeakReference<Any>>>>>()
     }
-    private val addressModel by lazy { ServerAddressModel() }
-
     private val loggingInterceptor by lazy {
         //日志拦截器
-        with(HttpLoggingInterceptor("Networking")) {
-
-            val debug = ModuleInfoHelper.readModuleInfo()?.debug ?: false
-
-            if (debug) {
+        HttpLoggingInterceptor("Networking").apply {
+            println("lwl RetrofitMap.debug?${AppUtils.isDebug()}")
+            if (AppUtils.isDebug()) {
                 setLogLevel(Level.INFO)
                 setPrintLevel(HttpLoggingInterceptor.PrintLevel.BODY)
             } else {
                 setLogLevel(Level.OFF)
                 setPrintLevel(HttpLoggingInterceptor.PrintLevel.NONE)
             }
-
-            this
         }
     }
 
@@ -206,8 +254,10 @@ private class RetrofitMap {
 
         var url = baseUrl
         if (url.isBlank()) {
-            url = addressModel.getActiveAddress().url
+            url = ServiceAddressHelper.baseUrl()
         }
+
+        println("lwl RetrofitMap.getValue url=$url type=$type")
 
         //同一个url，retrofit会有网络和强制读取本地缓存的情况
         //这里需要区分不同的类别
@@ -284,10 +334,6 @@ private class RetrofitMap {
             .addConverterFactory(gson)
             .build()
     }
-}
-
-enum class RetrofitType {
-    NORMAL, CACHE, FORCE_CACHE
 }
 
 private class TrustAllHostnameVerifier : HostnameVerifier {

@@ -22,8 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ContentLoadingProgressBar
 import com.cla.wan.base.R
 import com.cla.wan.base.utils.setC1
-import com.cla.wan.utils.app.AppUtils.dp2px
 import com.cla.wan.utils.app.colorValue
+import com.cla.wan.utils.app.dp2px
 
 /**
  * 加载数据
@@ -214,7 +214,7 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
         loadingView = RelativeLayout(context).apply {
             val ctx = ContextThemeWrapper(context, R.style.MyContentProgressBar)
             addView(ContentLoadingProgressBar(ctx).apply {
-                val size = dp2px(44)
+                val size = 44.dp2px()
                 val params = RelativeLayout.LayoutParams(size, size)
                 params.addRule(RelativeLayout.CENTER_IN_PARENT)
                 layoutParams = params
@@ -248,7 +248,7 @@ class MultipleStatusLayout(context: Context, attr: AttributeSet? = null) :
 
                 val errorDrawable =
                     ContextCompat.getDrawable(context, R.mipmap.placeholder_empty_net)
-                compoundDrawablePadding = dp2px(20)
+                compoundDrawablePadding = 20.dp2px()
                 setCompoundDrawablesRelativeWithIntrinsicBounds(null, errorDrawable, null, null)
 
                 text = "数据加载失败，点我重试"

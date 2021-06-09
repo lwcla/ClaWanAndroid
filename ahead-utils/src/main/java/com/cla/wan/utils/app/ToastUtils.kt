@@ -1,18 +1,14 @@
-package com.cla.wan.base.utils
+package com.cla.wan.utils.app
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.Gravity
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import com.cla.wan.utils.LifeCycleInjector
 import com.cla.wan.utils.R
-import com.cla.wan.utils.app.AppUtils.dp2px
-import com.cla.wan.utils.app.colorValue
 
 private val toastHandler by lazy { Handler(Looper.getMainLooper()) }
 private val tagMap = mutableMapOf<String, Toast>()
@@ -61,6 +57,7 @@ fun Context?.toast(
  * @param duration toast显示的时长
  * @param time 是否需要增加时间限制，10s秒钟只显示一次
  */
+@SuppressLint("ShowToast")
 fun Context?.toast(
     msg: String?,
     tag: String? = null,
@@ -81,8 +78,9 @@ fun Context?.toast(
         }
 
         try {
-            val toast = tagMap[realTag] ?: getCustomToast(this, msg, duration)
-            toast.view?.findViewById<TextView>(R.id.tvContent)?.text = msg
+            val toast = tagMap[realTag] ?: Toast.makeText(this, msg, duration)
+            toast?.setGravity(Gravity.CENTER, 0, 0)
+            toast?.setText(msg)
 
             if (time) {
                 //10s秒钟只显示一次
@@ -116,30 +114,4 @@ fun Context?.cancelToast(tag: String? = null) {
         val toast = tagMap[realTag]
         toast?.cancel()
     }
-}
-
-private fun getCustomToast(
-    context: Context,
-    msg: String?,
-    cDuration: Int = Toast.LENGTH_SHORT
-) = Toast(context).apply {
-    //android r 在后台情况下禁止自定义toast了
-    view = TextView(context).apply {
-        layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        id = R.id.tvContent
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, 15.toFloat())
-        setTextColor(context.colorValue(R.color.black))
-
-        val start = dp2px(15)
-        val top = dp2px(7)
-        setPadding(start, top, start, top)
-        setBackgroundResource(R.drawable.common_toast_bg)
-
-        text = msg
-    }
-    setGravity(Gravity.CENTER, 0, 0)
-    duration = cDuration
 }

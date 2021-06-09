@@ -6,24 +6,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
+import com.cla.wan.utils.config.ModuleInfoHelper
 
 object AppUtils {
 
-    /**
-     * 使用QMUIDisplayHelper
-     * 把dp转换成px值
-     */
-    fun dp2px(dp: Int): Int {
-        return SizeUtils.dp2px(dp.toFloat())
-    }
-
-    /**
-     * 使用QMUIDisplayHelper
-     * 把dp转换成px值
-     */
-    fun dp2px(dp: Float): Int {
-        return SizeUtils.dp2px(dp)
-    }
 
     /**
      * 获取屏幕宽度
@@ -38,7 +24,24 @@ object AppUtils {
     fun getScreenHeight(): Int {
         return ScreenUtils.getScreenHeight()
     }
+
+    /**
+     * 是否debug模式
+     */
+    fun isDebug() = ModuleInfoHelper.impl.readModuleInfo().debug
 }
+
+/**
+ * 使用QMUIDisplayHelper
+ * 把dp转换成px值
+ */
+fun Int.dp2px() = SizeUtils.dp2px(this.toFloat())
+
+/**
+ * 使用QMUIDisplayHelper
+ * 把dp转换成px值
+ */
+fun Float.dp2px(): Int = SizeUtils.dp2px(this)
 
 /**
  * 关闭软件盘

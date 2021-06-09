@@ -53,7 +53,7 @@ class TokenInterceptor : Interceptor {
                 }
 
 //                Logger.e("刷新token失败，返回登录界面")
-                EventBus.getDefault().post(RefreshTokenFailed(message))
+//                EventBus.getDefault().post(RefreshTokenFailed(message))
                 refreshingTokenLocke.unlock()
                 throw TokenFailureException()
             }

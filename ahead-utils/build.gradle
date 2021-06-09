@@ -33,4 +33,8 @@ dependencies {
     implementation config.room_runtime
     implementation config.room_ktx
     kapt config.room_compiler
+
+    api config.lifecycle_viewModelScope
+    api config.lifecycle_lifeCycleScope
+    api config.lifecycle_liveData
 }

@@ -24,6 +24,7 @@ private val HTTP_CACHE_PATH = File(LifeCycleInjector.app?.cacheDir, "responses")
  * 网络缓存设置
  */
 internal fun getNetCache(): Cache {
+    println("lwl <top>.getNetCache HTTP_CACHE_PATH=$HTTP_CACHE_PATH")
     val cacheDir = File(HTTP_CACHE_PATH)
     return Cache(cacheDir, calculateDiskCacheSize(cacheDir))
 }

@@ -2,7 +2,6 @@ package com.cla.wan.utils.config
 
 import com.alibaba.android.arouter.facade.template.IProvider
 import com.cla.wan.utils.app.ARouterUtil
-import com.cla.wan.utils.entity.ServerAddress
 
 
 interface ITokenProvider : IProvider {
@@ -24,13 +23,9 @@ interface ITokenProvider : IProvider {
     fun saveToken(token: String)
 }
 
-interface IServerAddressProvider : IProvider {
-    fun addresses(): List<ServerAddress>
-}
-
 object ITokenProviderHelper {
 
-    val impl by lazy { ARouterUtil.navigation(UtilsPath.TOKEN_SERVICE) as? ITokenProvider? }
+    val impl by lazy { ARouterUtil.navigation(HostPath.TOKEN_SERVICE) as? ITokenProvider? }
 
     fun getToken(): String = impl?.getToken() ?: ""
 
@@ -43,7 +38,7 @@ object ITokenProviderHelper {
 
     fun ignoreUrls(): Array<String> = impl?.ignoreUrls() ?: arrayOf("")
 
-    fun clientType(): String = impl?.clientType() ?:""
+    fun clientType(): String = impl?.clientType() ?: ""
 
     fun saveToken(token: String) = impl?.saveToken(token)
 }

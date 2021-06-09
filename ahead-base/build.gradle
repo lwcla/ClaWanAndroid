@@ -22,8 +22,4 @@ dependencies {
 
     implementation config.gson
     implementation config.eventbus_live
-
-    api config.lifecycle_viewModelScope
-    api config.lifecycle_lifeCycleScope
-    api config.lifecycle_liveData
 }

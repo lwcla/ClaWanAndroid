@@ -10,7 +10,7 @@ import android.view.View
 import com.cla.scaffold.R
 import com.cla.wan.base.config.SpKey
 import com.cla.wan.base.dialog.BaseDialog
-import com.cla.wan.base.utils.showToast
+import com.cla.wan.utils.app.showToast
 import com.cla.wan.utils.app.colorValue
 import com.cla.wan.utils.data.saveData
 import kotlinx.android.synthetic.main.dialog_protocol_agree_layout.*

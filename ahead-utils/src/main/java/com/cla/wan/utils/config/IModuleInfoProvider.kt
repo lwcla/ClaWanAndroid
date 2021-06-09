@@ -9,6 +9,13 @@ interface IModuleInfoProvider : IProvider {
 }
 
 object ModuleInfoHelper {
-    val impl by lazy { ARouterUtil.navigation(UtilsPath.APP_VERSION_SERVICE) as? IModuleInfoProvider? }
-    fun readModuleInfo(): ModuleInfo? = impl?.readModuleInfo()
+    val impl by lazy {
+        try {
+            ARouterUtil.navigation(HostPath.APP_VERSION_SERVICE) as IModuleInfoProvider
+        } catch (e: Exception) {
+            throw RuntimeException("没有找到IModuleInfoProvider的实现类")
+        }
+    }
+
+    fun readModuleInfo(): ModuleInfo = impl.readModuleInfo()
 }

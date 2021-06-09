@@ -12,8 +12,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import cn.fhstc.utils.ui.StatusUtils.getStatusBarHeight
 import com.cla.wan.base.R
-import com.cla.wan.utils.app.AppUtils.dp2px
 import com.cla.wan.utils.app.AppUtils.getScreenWidth
+import com.cla.wan.utils.app.dp2px
 import com.cla.wan.utils.widget.AlphaImageButton
 import kotlin.math.max
 
@@ -22,10 +22,10 @@ import kotlin.math.max
  */
 class SimpleTitleBar(context: Context, attr: AttributeSet? = null) : RelativeLayout(context, attr) {
 
-    private val topPadding by lazy { max(dp2px(40), getStatusBarHeight()) }
-    private val bottomPadding by lazy { dp2px(15) }
-    private val startPadding = dp2px(20)
-    private val ivSize by lazy { dp2px(20) }
+    private val topPadding by lazy { max(40.dp2px(), getStatusBarHeight()) }
+    private val bottomPadding by lazy { 15.dp2px() }
+    private val startPadding = 20.dp2px()
+    private val ivSize by lazy { 20.dp2px() }
 
     var showTitle = true
 

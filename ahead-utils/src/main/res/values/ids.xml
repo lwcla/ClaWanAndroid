@@ -2,4 +2,6 @@
 <resources>
     <item name="last_toast_time" type="id" />
     <item name="tvContent" type="id" />
+    <item name="recycler_empty_item" type="id" />
+
 </resources>
