@@ -47,11 +47,11 @@ data class Resource<T>(
     }
 }
 
-inline fun <reified S, reified T : Any> fire(
+inline fun <reified S, reified T : Any> fetch(
     forceCache: Boolean = false,
     cache: Boolean = true,
     baseUrl: String = "",
-    crossinline block: suspend S.() -> Call<T>
+    crossinline block: suspend S.() -> T
 ) = liveData(Dispatchers.IO) {
 
     //返回loading信息
@@ -62,7 +62,7 @@ inline fun <reified S, reified T : Any> fire(
             val forceCacheService =
                 RetrofitManager.createService<S>(RetrofitType.FORCE_CACHE, baseUrl)
             try {
-                val data = block(forceCacheService).await()
+                val data = block(forceCacheService)
                 //这是从缓存中读取的数据，先返回让ui显示出来
                 emit(Resource.success(data, code = 200))
             } catch (e: Exception) {
@@ -79,7 +79,7 @@ inline fun <reified S, reified T : Any> fire(
         }
 
         try {
-            val data = block(service).await()
+            val data = block(service)
             emit(Resource.success(data, code = 200))
             return@liveData
         } catch (e: Exception) {
@@ -97,6 +97,15 @@ inline fun <reified S, reified T : Any> fire(
     emit(Resource.failure<T>(message = errorInfo))
 }
 
+inline fun <reified S, reified T : Any> fire(
+    forceCache: Boolean = false,
+    cache: Boolean = true,
+    baseUrl: String = "",
+    crossinline block: suspend S.() -> Call<T>
+) = fetch<S, T>(forceCache, cache, baseUrl) {
+    block(this).await()
+}
+
 /**
  * @author  zhouyufei
  * @date  2020/4/12 11:23 AM
@@ -110,7 +119,6 @@ object RetrofitManager {
         baseUrl: String = ""
     ): T {
         val pair = getServiceMap(type, baseUrl)
-        println("lwl RetrofitManager.createService pair=$pair")
         return getService(pair.first, pair.second)
     }
 
@@ -257,8 +265,6 @@ private class RetrofitMap {
             url = ServiceAddressHelper.baseUrl()
         }
 
-        println("lwl RetrofitMap.getValue url=$url type=$type")
-
         //同一个url，retrofit会有网络和强制读取本地缓存的情况
         //这里需要区分不同的类别
         if (retrofitMap.containsKey(url)) {
@@ -274,7 +280,7 @@ private class RetrofitMap {
                 val fit = createRetrofit(type, url)
                 val cache = mutableMapOf<Class<*>, WeakReference<Any>>()
                 pair = Pair(fit, cache)
-                println("lwl RetrofitMap.getValue synchronized create pair=$pair")
+                println("lwl RetrofitMap.getValue synchronized create url=$url type=$type pair=$pair")
                 val map = retrofitMap[url] ?: mutableMapOf()
                 map[type] = pair!!
                 retrofitMap[url] = map

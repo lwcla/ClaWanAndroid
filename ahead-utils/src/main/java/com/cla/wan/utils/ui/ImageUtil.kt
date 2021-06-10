@@ -65,7 +65,7 @@ fun getBitmap(file: File?): Bitmap? {
 }
 
 inline fun ImageView.load(
-    url: Any,
+    url: Any?,
     placeholder: Drawable? = null,
     errorDrawable: Drawable? = null,
     @IntRange(from = 0) frame: Long = 0,
@@ -75,7 +75,7 @@ inline fun ImageView.load(
 }
 
 inline fun ImageView.load(
-    url: Any,
+    url: Any?,
     placeholder: Drawable? = null,
     errorDrawable: Drawable? = null,
     @IntRange(from = 0) frame: Long = 0,
@@ -83,18 +83,16 @@ inline fun ImageView.load(
     overrideHeight: Int,
     requestBuilder: RequestBuilder<Drawable>.() -> Unit = { this.fitCenter() }
 ) {
-    Glide.with(this)
-        .load(url)
-        .frame(frame)
-        .placeholder(placeholder)
-        .error(errorDrawable)
-        .apply {
-            if (overrideHeight != 0 && overrideWidth != 0) {
-                this.override(overrideWidth, overrideHeight)
-            }
+    Glide.with(this).load(url).apply {
+        frame(frame)
+        placeholder(placeholder)
+        error(errorDrawable)
+        if (overrideHeight != 0 && overrideWidth != 0) {
+            this.override(overrideWidth, overrideHeight)
         }
-        .apply { requestBuilder(this) }
-        .into(this)
+        requestBuilder(this)
+        into(this@load)
+    }
 }
 
 

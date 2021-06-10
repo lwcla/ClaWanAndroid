@@ -21,7 +21,7 @@ interface HomeService {
      *  置顶文章
      */
     @GET(ApiUrl.HOME_TOP_ARTICLE)
-    fun loadHomeTopArticle(): Call<BaseData<BaseListData<HomeArticleData>>>
+    fun loadHomeTopArticle(): Call<BaseData<List<HomeArticleData>>>
 
 
     /**

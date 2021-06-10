@@ -36,7 +36,7 @@ class SimpleTitleBar(context: Context, attr: AttributeSet? = null) : RelativeLay
             val height = ivSize + topPadding + bottomPadding
             val params = LayoutParams(width, height)
             this.layoutParams = params
-
+            setBackgroundResource(R.color.transparent)
             //增加点击范围
             setPadding(startPadding, topPadding, startPadding, bottomPadding)
 

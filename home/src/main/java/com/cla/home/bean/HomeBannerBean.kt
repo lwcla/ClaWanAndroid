@@ -6,7 +6,7 @@ package com.cla.home.bean
 data class HomeBannerBean(
     val desc: String,
     val id: Int,
-    val imagePath: String,
+    val imagePath: String?,
     val isVisible: Int,
     val order: Int,
     val title: String,
@@ -22,7 +22,12 @@ data class HomeBannerBean(
  * @param pageData 首页数据
  */
 data class HomePageBean(
-    val bannerBean: List<HomeBannerBean>,
-    val topData: List<HomeArticleData>,
-    val pageData: List<HomeArticleData>
+    var bannerBean: List<HomeBannerBean> = emptyList(),
+    var topData: List<HomeArticleData> = emptyList(),
+    var pageData: List<HomeArticleData> = emptyList()
 )
+
+internal fun HomePageBean?.isNullOrEmpty() =
+    this?.run { bannerBean.isEmpty() && topData.isEmpty() && pageData.isEmpty() } ?: true
+
+

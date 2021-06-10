@@ -1,11 +1,9 @@
 package com.cla.home.vm
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
-import com.cla.home.bean.HomePageBean
 import com.cla.wan.utils.net.Resource
 
 class HomeVm : ViewModel() {
@@ -25,10 +23,7 @@ class HomeVm : ViewModel() {
         }
     }
 
-    val refreshPage = _refreshPage.switchMap {
-
-
-    }
+    val refreshPage = _refreshPage.switchMap { repo.refreshData() }
 
     fun refreshHomeData() {
         page = 0

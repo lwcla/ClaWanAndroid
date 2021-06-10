@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import com.cla.wan.base.R
 import com.cla.wan.base.widget.MultipleStatusLayout
 
 abstract class LateInitFragment : BaseFragment() {
@@ -22,6 +23,9 @@ abstract class LateInitFragment : BaseFragment() {
             initView = { initView() }
             useDefaultLoadingView(requireContext())
             useDefaultErrorView(requireContext())
+
+            emptyViewLayoutId = R.layout.layout_data_empty_new
+            errorViewLayoutId = R.layout.layout_load_failure_new
             customStatusLayout(this)
         }
         return rootView

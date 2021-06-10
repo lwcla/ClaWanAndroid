@@ -84,7 +84,6 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
     ): T = map[id]?.run { this as T } ?: synchronized(itemView) {
         val view = itemView.findViewById<T>(id)
         map[id] = view
-        println("lwl MyBaseViewHolder.get id=$id map=${map}")
         view
     }
 }
