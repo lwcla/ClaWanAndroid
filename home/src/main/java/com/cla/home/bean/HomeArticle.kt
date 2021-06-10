@@ -1,5 +1,8 @@
 package com.cla.home.bean
 
+import com.blankj.utilcode.util.TimeUtils
+import java.util.*
+
 /**
  * 首页文章列表
  */
@@ -42,4 +45,16 @@ data class HomeArticleData(
 data class HomeArticleTag(
     val name: String,
     val url: String
+)
+
+internal fun HomeArticleData.owner() = if (!author.isNullOrBlank()) {
+    "作者:$author"
+} else if (!shareUser.isNullOrBlank()) {
+    "分享人:$shareUser"
+} else {
+    ""
+}
+
+internal fun HomeArticleData.timeByNow() = TimeUtils.getFriendlyTimeSpanByNow(
+    Date(shareDate ?: System.currentTimeMillis())
 )

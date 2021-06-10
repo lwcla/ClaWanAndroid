@@ -36,9 +36,4 @@ class HomeVm : ViewModel() {
     fun loadArticle() {
         _loadArticle.value = page++
     }
-
-    /**
-     * 加载banner数据
-     */
-    fun loadBanner() = repo.loadBanner()
 }

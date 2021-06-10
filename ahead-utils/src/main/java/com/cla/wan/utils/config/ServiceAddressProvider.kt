@@ -10,14 +10,10 @@ interface ServiceAddressProvider : IProvider {
 object ServiceAddressHelper {
 
     private val impl by lazy {
-        try {
-            ARouterUtil.navigation(HostPath.SERVICE_ADDRESS_PROVIDER_IMPL) as ServiceAddressProvider
-        } catch (e: Exception) {
-            throw RuntimeException("没有找到ServiceAddressProvider的实现类")
-        }
+        ARouterUtil.find<ServiceAddressProvider>(HostPath.SERVICE_ADDRESS_PROVIDER_IMPL)
     }
 
-    fun baseUrl(): String = impl.baseUrl()
+    fun baseUrl(): String = impl?.baseUrl() ?: ""
 }
 
 enum class AddressType {

@@ -14,6 +14,8 @@ import com.cla.wan.base.config.HomePath
 import com.cla.wan.base.ui.fragment.LateInitFragment
 import com.cla.wan.utils.adapter.decoration.SpaceItemDecoration
 import com.cla.wan.utils.net.ResourceState
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.MaterialHeader
 import com.youth.banner.Banner
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.launch
@@ -38,7 +40,8 @@ class HomeFragment : LateInitFragment() {
     override fun loadData() {
         homeVm.loadArticle.observe(this, {
             showContent()
-            homeAdapter.refreshData(it?.data?.datas ?: emptyList())
+            refreshLayout.finishLoadMore()
+            homeAdapter.addData(it?.data?.datas ?: emptyList())
         })
 
         homeVm.refreshPage.observe(this, {
@@ -51,13 +54,14 @@ class HomeFragment : LateInitFragment() {
                     }
 
                     showContent()
+                    refreshLayout.finishRefresh()
                     val list = mutableListOf<HomeArticleData>()
                     list.addAll(pageBean!!.topData)
                     list.addAll(pageBean.pageData)
                     homeAdapter.refreshData(list)
 
                     bannerAdapter.setDatas(pageBean.bannerBean)
-                    banner.currentItem = 0
+                    banner.setCurrentItem(1, false)     //1这才是第一页
                 }
 
                 ResourceState.Failure -> showError()
@@ -70,18 +74,13 @@ class HomeFragment : LateInitFragment() {
     }
 
     override fun initView() {
-        refreshLayout.setOnRefreshListener {
-            homeVm.refreshHomeData()
-        }
 
-        refreshLayout.setOnChildScrollUpCallback { parent, child ->
+        refreshLayout.setRefreshHeader(MaterialHeader(requireContext()))
+        refreshLayout.setRefreshFooter(ClassicsFooter(requireContext()))
+        refreshLayout.setOnRefreshListener { homeVm.refreshHomeData() }
+        refreshLayout.setOnLoadMoreListener { homeVm.loadArticle() }
 
-            true
-        }
-
-        banner.apply {
-            addBannerLifecycleObserver(this@HomeFragment)//添加生命周期观察者
-            setAdapter(bannerAdapter)
-        }
+        banner.addBannerLifecycleObserver(this@HomeFragment)//添加生命周期观察者
+        banner.setAdapter(bannerAdapter)
     }
 }

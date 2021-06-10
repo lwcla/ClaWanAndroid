@@ -42,6 +42,37 @@ object ARouterUtil {
      *
      * @param path `path`
      */
+    inline fun <reified T> find(path: String, defaultPath: String? = null): T? {
+        val aRouter = getARouter() ?: return null
+
+        var instance = try {
+            aRouter.build(path).navigation() as? T?
+        } catch (e: Exception) {
+            null
+        }
+
+        if (instance == null && !defaultPath.isNullOrBlank()) {
+            instance = try {
+                aRouter.build(defaultPath).navigation() as? T?
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        if (instance == null && AppUtils.isDebug()) {
+            throw RuntimeException("没有找到${T::class.java.simpleName}的实现类")
+        }
+
+        return instance
+    }
+
+    /**
+     * 使用 [ARouter] 根据 `path` 跳转到对应的页面, 这个方法因为没有使用 [Activity]跳转
+     * 所以 [ARouter] 会自动给 [android.content.Intent] 加上 Intent.FLAG_ACTIVITY_NEW_TASK
+     * 如果不想自动加上这个 Flag 请使用 [ARouter.getInstance] 并传入 [Activity]
+     *
+     * @param path `path`
+     */
     fun navigation(path: String?): Any? {
         val aRouter = getARouter() ?: return null
         return aRouter.build(path).navigation()

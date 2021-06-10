@@ -57,7 +57,7 @@ abstract class MyBaseAdapter<T>(context: Context) :
         @LayoutRes layoutRes: Int,
         parent: ViewGroup,
         crossinline initHolder: MyBaseViewHolder<T>.() -> Unit = {},
-        crossinline bindData: MyBaseViewHolder<T>.(T) -> Unit
+        crossinline bindData: T.(MyBaseViewHolder<T>) -> Unit
     ) = object : MyBaseViewHolder<T>(inflater.inflate(layoutRes, parent, false)) {
 
         init {
@@ -66,7 +66,7 @@ abstract class MyBaseAdapter<T>(context: Context) :
 
         override fun bind(t: T) {
             this.bean = t
-            bindData(t)
+            t.bindData(this)
         }
     }
 }
@@ -85,6 +85,13 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
         val view = itemView.findViewById<T>(id)
         map[id] = view
         view
+    }
+
+    inline fun <reified T : View> click(
+        @IdRes id: Int,
+        clickListener: View.OnClickListener
+    ) {
+        get<T>(id).setOnClickListener(clickListener)
     }
 }
 
