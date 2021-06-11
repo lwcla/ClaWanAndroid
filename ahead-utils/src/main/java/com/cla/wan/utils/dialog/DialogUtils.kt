@@ -1,4 +1,4 @@
-package com.cla.wan.utils.ui
+package com.cla.wan.utils.dialog
 
 import android.content.Context
 import androidx.fragment.app.DialogFragment

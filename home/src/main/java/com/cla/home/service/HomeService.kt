@@ -11,11 +11,12 @@ import retrofit2.http.Path
 
 interface HomeService {
 
+
     /**
-     *  首页文章列表
+     *  banner
      */
-    @GET(ApiUrl.HOME_ARTICLE)
-    fun loadHomeData(@Path("page") page: Int): Call<BaseData<BaseListData<HomeArticleData>>>
+    @GET(ApiUrl.HOME_BANNER)
+    fun loadBanner(): Call<BaseData<List<HomeBannerBean>>>
 
     /**
      *  置顶文章
@@ -23,11 +24,15 @@ interface HomeService {
     @GET(ApiUrl.HOME_TOP_ARTICLE)
     fun loadHomeTopArticle(): Call<BaseData<List<HomeArticleData>>>
 
+    /**
+     *  首页文章列表
+     */
+    @GET(ApiUrl.HOME_ARTICLE)
+    fun loadHomeData(@Path("page") page: Int): Call<BaseData<BaseListData<HomeArticleData>>>
 
     /**
-     *  置顶文章
+     *  首页文章详情
      */
-    @GET(ApiUrl.HOME_BANNER)
-    fun loadBanner(): Call<BaseData<List<HomeBannerBean>>>
-
+    @GET(ApiUrl.HOME_ARTICLE_DETAIL)
+    fun loadHomeArticleDetail(@Path("id") id: Int): Call<BaseData<Any>>
 }

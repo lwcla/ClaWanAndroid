@@ -82,5 +82,11 @@ class HomeFragment : LateInitFragment() {
 
         banner.addBannerLifecycleObserver(this@HomeFragment)//添加生命周期观察者
         banner.setAdapter(bannerAdapter)
+
+        homeAdapter.showArticleDetail = { bean ->
+
+
+
+        }
     }
 }

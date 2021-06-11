@@ -9,7 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.cla.scaffold.R
 import com.cla.wan.base.config.SpKey
-import com.cla.wan.base.dialog.BaseDialog
+import com.cla.wan.utils.dialog.BaseDialog
 import com.cla.wan.utils.app.showToast
 import com.cla.wan.utils.app.colorValue
 import com.cla.wan.utils.data.saveData

@@ -15,7 +15,7 @@ import com.cla.scaffold.com.cla.scaffold.dialog.ProtocolAgreeDialog
 import com.cla.wan.base.config.ScaffoldPath
 import com.cla.wan.base.ui.BaseAty
 import com.cla.wan.utils.app.ARouterUtil
-import com.cla.wan.utils.ui.showDialogFragment
+import com.cla.wan.utils.dialog.showDialogFragment
 import kotlinx.android.synthetic.main.activity_guide.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

@@ -22,6 +22,11 @@ class HomeRepository {
     }
 
     /**
+     *  首页文章详情
+     */
+    fun loadHomeArticleDetail(id: Int) = fireBase<HomeService, Any> { loadHomeArticleDetail(id) }
+
+    /**
      * 刷新
      */
     fun refreshData() = fetch<HomeService, HomePageBean>(forceCache = true) {

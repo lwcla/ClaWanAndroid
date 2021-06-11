@@ -102,6 +102,13 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
     ) {
         get<T>(id).setOnClickListener(clickListener)
     }
+
+    inline fun <reified T : View> longClick(
+        @IdRes id: Int,
+        clickListener: View.OnLongClickListener
+    ) {
+        get<T>(id).setOnLongClickListener(clickListener)
+    }
 }
 
 

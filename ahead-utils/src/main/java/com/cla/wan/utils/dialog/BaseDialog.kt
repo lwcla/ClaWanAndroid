@@ -1,4 +1,4 @@
-package com.cla.wan.base.dialog
+package com.cla.wan.utils.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

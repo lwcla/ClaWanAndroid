@@ -25,8 +25,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+internal typealias ShowArticleDetail = (HomeArticleData) -> Unit
+
 class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
     MyBaseAdapter<HomeArticleData>(context) {
+
+    var showArticleDetail: ShowArticleDetail? = null
 
     override fun createHolder(
         parent: ViewGroup,
@@ -35,6 +39,15 @@ class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
         initHolder = {
             get<HomeTagContainerView>(R.id.llTag).owner = owner
             click<MaterialCardView>(R.id.cvContent) { bean?.title?.showToast() }
+            longClick<MaterialCardView>(R.id.cvContent) {
+                showArticleDetail?.let { show ->
+                    bean?.let { data ->
+                        show.invoke(data)
+                        return@longClick true
+                    }
+                }
+                false
+            }
             clickBean<RelativeLayout>(R.id.rlCollect) {
                 collect = !collect
                 get<ImageView>(R.id.ivCollect).collect(this)
