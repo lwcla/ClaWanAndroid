@@ -1,8 +1,5 @@
 package com.cla.home.bean
 
-import com.blankj.utilcode.util.TimeUtils
-import java.util.*
-
 /**
  * 首页文章列表
  */
@@ -12,17 +9,17 @@ data class HomeArticleData(
     val author: String?,
     val canEdit: Boolean,
     val chapterId: Int,
-    val chapterName: String,
-    val collect: Boolean,
+    val chapterName: String?,
+    var collect: Boolean,
     val courseId: Int,
     val desc: String,
     val descMd: String,
     val envelopePic: String,
-    val fresh: Boolean,
+    val fresh: Boolean?,
     val host: String,
     val id: Int,
     val link: String,
-    val niceDate: String,
+    val niceDate: String?,
     val niceShareDate: String,
     val origin: String,
     val prefix: String,
@@ -33,13 +30,14 @@ data class HomeArticleData(
     val shareDate: Long?,
     val shareUser: String?,
     val superChapterId: Int,
-    val superChapterName: String,
+    val superChapterName: String?,
     val tags: List<HomeArticleTag>,
-    val title: String,
+    val title: String?,
     val type: Int,
     val userId: Int,
     val visible: Int,
-    val zan: Int
+    val zan: Int,
+    var isTop: Boolean = false // 置顶
 )
 
 data class HomeArticleTag(
@@ -55,6 +53,20 @@ internal fun HomeArticleData.owner() = if (!author.isNullOrBlank()) {
     ""
 }
 
-internal fun HomeArticleData.timeByNow() = TimeUtils.getFriendlyTimeSpanByNow(
-    Date(shareDate ?: System.currentTimeMillis())
-)
+internal fun HomeArticleData.timeByNow(): String = niceDate ?: ""
+
+/**
+ * 分类
+ */
+internal fun HomeArticleData.classText() = StringBuilder().apply {
+
+    append("分类:")
+
+    if (!superChapterName.isNullOrBlank()) {
+        append(superChapterName)
+    }
+
+    if (!chapterName.isNullOrBlank()) {
+        append("/").append(chapterName)
+    }
+}

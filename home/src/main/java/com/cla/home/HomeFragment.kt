@@ -28,7 +28,7 @@ class HomeFragment : LateInitFragment() {
     private val bannerAdapter by lazy { HomeBannerAdapter(requireContext(), emptyList()) }
 
     private val homeAdapter by lazy {
-        HomeArticleAdapter(requireContext()).apply {
+        HomeArticleAdapter(requireContext(), this).apply {
             rvData.layoutManager = LinearLayoutManager(requireContext())
             rvData.addItemDecoration(SpaceItemDecoration(0, 15, 15, 15))
             rvData.adapter = this

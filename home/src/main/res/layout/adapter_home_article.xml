@@ -17,42 +17,87 @@
         android:paddingStart="15dp"
         android:paddingTop="10dp"
         android:paddingEnd="15dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="5dp">
 
         <TextView
-            android:id="@+id/tvAuthor"
+            android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/c1"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/tvDate"
+            android:textColor="?attr/colorControlNormal"
+            android:textSize="19sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="抛物线" />
+            tools:text="测试" />
+
+        <com.cla.home.adapter.HomeTagContainerView
+            android:id="@+id/llTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/tvClass"
+            app:layout_constraintEnd_toStartOf="@id/tvClass"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvClass" />
+
+        <TextView
+            android:id="@+id/tvClass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:textColor="?attr/colorControlNormal"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/llTag"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <com.cla.wan.utils.widget.ScaleRelativeLayout
+            android:id="@+id/rlCollect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvClass">
+
+            <ImageView
+                android:id="@+id/ivCollect"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/svg_un_star"
+                tools:ignore="ContentDescription" />
+
+        </com.cla.wan.utils.widget.ScaleRelativeLayout>
 
         <TextView
             android:id="@+id/tvDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingEnd="15dp"
+            android:textColor="?attr/colorControlNormal"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/rlCollect"
+            app:layout_constraintEnd_toStartOf="@id/tvAuthor"
+            app:layout_constraintStart_toEndOf="@id/rlCollect"
+            app:layout_constraintTop_toTopOf="@id/rlCollect"
+            tools:text="2天前" />
+
+        <TextView
+            android:id="@+id/tvAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorControlNormal"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/rlCollect"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvAuthor"
-            tools:text="2天前" />
-
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:textColor="?attr/colorControlNormal"
-            android:textSize="19sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvAuthor"
-            tools:text="测试" />
+            app:layout_constraintTop_toTopOf="@id/rlCollect"
+            tools:text="抛物线" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </com.google.android.material.card.MaterialCardView>

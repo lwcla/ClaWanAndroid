@@ -3,8 +3,8 @@ package com.cla.wan.utils.widget
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
-import cn.fhstc.utils.ui.AlphaViewHelper
-import cn.fhstc.utils.ui.AlphaViewInf
+import com.cla.wan.utils.ui.AlphaViewHelper
+import com.cla.wan.utils.ui.AlphaViewInf
 
 /**
  * 按压效果的imageButton

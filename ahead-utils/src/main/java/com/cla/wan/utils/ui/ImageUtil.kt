@@ -1,4 +1,4 @@
-package cn.fhstc.utils.ui
+package com.cla.wan.utils.ui
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.cla.wan.utils.R
 import java.io.File
 
 
@@ -29,6 +30,15 @@ object ImageUtil {
 
 fun Context.asDrawable(@DrawableRes res: Int) = ContextCompat.getDrawable(this, res)
 fun Int.asDrawable(context: Context) = ContextCompat.getDrawable(context, this)
+
+fun ImageView.setSvgImage(@DrawableRes drawableResId: Int, colorResId: Int = R.color.teal_200) {
+    try {
+        context?.apply {
+            setImageDrawable(drawableResId.toDrawable(this, colorResId))
+        }
+    } catch (e: Exception) {
+    }
+}
 
 
 fun Drawable.drawable2Bitmap(): Bitmap? {

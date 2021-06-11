@@ -7,10 +7,9 @@ import com.cla.wan.utils.app.showToast
 import com.cla.wan.utils.config.ServiceAddressHelper
 import com.cla.wan.utils.config.StartUpConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.await
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.ref.WeakReference
 import java.security.SecureRandom
@@ -47,11 +46,69 @@ data class Resource<T>(
     }
 }
 
+data class CallResult<T>(
+    val success: Boolean,
+    val httpCode: Int,
+    val result: T?,
+    val message: String? = null
+) {
+    companion object {
+        inline fun <T> join(vararg results: CallResult<*>, block: () -> T): CallResult<T> {
+
+            if (results.find { !it.success } != null) {
+                val message = results.find { !it.message.isNullOrBlank() }?.message ?: ""
+                return CallResult(false, 0, null, message)
+            }
+
+            return CallResult(true, 200, block())
+        }
+    }
+}
+
+/**
+ * 请求成功
+ */
+fun <T> CallResult<T>.suc() = success && result != null
+
+fun <T> CallResult<T>.toResource() = if (suc()) {
+    Resource.success(result, code = httpCode)
+} else {
+    Resource.failure(message = message)
+}
+
+suspend fun <T> Call<T>.callAwait(): CallResult<T> = withContext(Dispatchers.IO) {
+
+    try {
+        val response = execute()
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body == null) {
+                val invocation = request().tag(Invocation::class.java)!!
+                val method = invocation.method()
+                val e =
+                    KotlinNullPointerException("Response from " + method.declaringClass.name + '.' + method.name + " was null but response body type was declared as non-null")
+                MyLog.e(javaClass.name, "callAwait $e")
+                CallResult(false, 0, null, e.message)
+            } else {
+                CallResult(true, response.code(), body)
+            }
+        } else {
+            val e = HttpException(response)
+            MyLog.e(javaClass.name, "callAwait $e")
+            CallResult(false, 0, null, e.message)
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        CallResult(false, 0, null, e.message)
+    }
+}
+
 inline fun <reified S, reified T : Any> fetch(
     forceCache: Boolean = false,
     cache: Boolean = true,
     baseUrl: String = "",
-    crossinline block: suspend S.() -> T
+    crossinline block: suspend S.() -> CallResult<T>
 ) = liveData(Dispatchers.IO) {
 
     //返回loading信息
@@ -61,12 +118,10 @@ inline fun <reified S, reified T : Any> fetch(
         if (forceCache) {
             val forceCacheService =
                 RetrofitManager.createService<S>(RetrofitType.FORCE_CACHE, baseUrl)
-            try {
-                val data = block(forceCacheService)
+            val data = block(forceCacheService)
+            if (data.suc()) {
                 //这是从缓存中读取的数据，先返回让ui显示出来
-                emit(Resource.success(data, code = 200))
-            } catch (e: Exception) {
-                e.printStackTrace()
+                emit(data.toResource())
             }
         }
 
@@ -78,15 +133,9 @@ inline fun <reified S, reified T : Any> fetch(
             RetrofitManager.createService<S>(RetrofitType.NORMAL, baseUrl)
         }
 
-        try {
-            val data = block(service)
-            emit(Resource.success(data, code = 200))
-            return@liveData
-        } catch (e: Exception) {
-            e.printStackTrace()
-            e.message
-        }
-
+        val data = block(service)
+        emit(data.toResource())
+        return@liveData
     } catch (e: Exception) {
         e.printStackTrace()
         e.message
@@ -103,7 +152,7 @@ inline fun <reified S, reified T : Any> fire(
     baseUrl: String = "",
     crossinline block: suspend S.() -> Call<T>
 ) = fetch<S, T>(forceCache, cache, baseUrl) {
-    block(this).await()
+    block(this).callAwait()
 }
 
 /**
@@ -144,102 +193,17 @@ object RetrofitManager {
 
         return serviceClass!! as T
     }
-
-    /**
-     * 这里用call的同步方法，是为了抓到[TokenFailureException]这个异常
-     * 用call的异步方法，会因为抓不到其他线程的异常，导致程序崩溃
-     */
-//    fun <T> exec(call: Call<NetResp<T>>): LiveData<NetResp<T>> {
-//        var resp = MutableLiveData<NetResp<T>>()
-//
-//        GlobalScope.launch(Dispatchers.IO) {
-//
-//            try {
-//                val response = call.execute()
-//
-//                launch(Dispatchers.Main.immediate) {
-//                    if (response.code() == 204) {
-//                        //处理delete请求时body为空的情况
-//                        resp.value = NetResp("success", 200, Any(), 204) as NetResp<T>
-//                    } else {
-//                        val body = response.body()
-//                        if (body == null) {
-//                            resp.value =
-//                                NetResp.fromJson(response.errorBody()?.string(), response.code())
-//                        } else {
-//                            body.httpCode = response.code()
-//                            resp.value = body
-//                        }
-//                    }
-//                }
-//
-//            } catch (e: TokenFailureException) {
-//                e.printStackTrace()
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//
-//                launch(Dispatchers.Main.immediate) {
-//                    resp.value = NetResp.fromJson(e.message, -1)
-//                }
-//            }
-//        }
-//
-//        return resp
-//    }
-
-    /**
-     * 加载缓存数据
-     */
-//    fun <T> cacheExec(call: Call<NetResp<T>>): LiveData<T> {
-//
-//        val resp = MutableLiveData<T>()
-//
-//        GlobalScope.launch(Dispatchers.IO) {
-//            try {
-//                val response = call.execute()
-//                if (response.code() == 204) {
-//                    //处理delete请求时body为空的情况
-//                    resp.postValue(null)
-//                    return@launch
-//                }
-//
-//                val body = response.body()
-//                if (body == null) {
-//                    resp.postValue(null)
-//                    return@launch
-//                }
-//
-//                if (!body.success()) {
-//                    resp.postValue(null)
-//                    return@launch
-//                }
-//
-//                resp.postValue(body.data)
-//
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                resp.postValue(null)
-//            }
-//        }
-//
-//        return resp
-//    }
 }
-
-//fun <T> Call<NetResp<T>>.toLiveData(): LiveData<NetResp<T>> {
-//    return RetrofitManager.exec(this)
-//}
 
 private class RetrofitMap {
 
-    private val startUpConfig by lazy { StartUpConfig.impl }
-    private val gson by lazy { GsonConverterFactory.create() }
-
     //这里写成这个样子只是因为楼管需要直接切换项目，不能杀死app来切换
     //这里就是根据baseUrl来获取不同的map，这个map装的是不同type对应的retrofit
-    private val retrofitMap by lazy {
-        mutableMapOf<String, MutableMap<RetrofitType, Pair<Retrofit, MutableMap<Class<*>, WeakReference<Any>>>>>()
-    }
+    private val retrofitMap by lazy { mutableMapOf<String, RetrofitTypeMap>() }
+
+    private val startUpConfig by lazy { StartUpConfig.impl }
+
+    private val gson by lazy { GsonConverterFactory.create() }
     private val loggingInterceptor by lazy {
         //日志拦截器
         HttpLoggingInterceptor("Networking").apply {
@@ -258,7 +222,7 @@ private class RetrofitMap {
         baseUrl: String,
         type: RetrofitType
     ): Pair<Retrofit, MutableMap<Class<*>, WeakReference<Any>>> {
-        var pair: Pair<Retrofit, MutableMap<Class<*>, WeakReference<Any>>>? = null
+        var pair: Pair<Retrofit, RetrofitClassMap>? = null
 
         var url = baseUrl
         if (url.isBlank()) {
@@ -277,11 +241,9 @@ private class RetrofitMap {
 
         synchronized(this) {
             if (pair == null) {
-                val fit = createRetrofit(type, url)
-                val cache = mutableMapOf<Class<*>, WeakReference<Any>>()
-                pair = Pair(fit, cache)
+                pair = Pair(createRetrofit(type, url), RetrofitClassMap())
                 println("lwl RetrofitMap.getValue synchronized create url=$url type=$type pair=$pair")
-                val map = retrofitMap[url] ?: mutableMapOf()
+                val map = retrofitMap[url] ?: RetrofitTypeMap()
                 map[type] = pair!!
                 retrofitMap[url] = map
             }
@@ -341,6 +303,12 @@ private class RetrofitMap {
             .build()
     }
 }
+
+private data class RetrofitClassMap(val classMap: MutableMap<Class<*>, WeakReference<Any>> = mutableMapOf()) :
+    MutableMap<Class<*>, WeakReference<Any>> by classMap
+
+private data class RetrofitTypeMap(val map: MutableMap<RetrofitType, Pair<Retrofit, RetrofitClassMap>> = mutableMapOf()) :
+    MutableMap<RetrofitType, Pair<Retrofit, RetrofitClassMap>> by map
 
 private class TrustAllHostnameVerifier : HostnameVerifier {
     override fun verify(hostname: String?, session: SSLSession?): Boolean {

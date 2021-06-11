@@ -1,4 +1,4 @@
-package cn.fhstc.utils.ui
+package com.cla.wan.utils.ui
 
 import android.view.View
 import java.lang.ref.WeakReference

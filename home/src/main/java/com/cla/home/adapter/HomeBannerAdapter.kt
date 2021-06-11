@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import cn.fhstc.utils.ui.load
+import com.cla.wan.utils.ui.load
 import com.cla.home.R
 import com.cla.home.bean.HomeBannerBean
 import com.youth.banner.adapter.BannerAdapter

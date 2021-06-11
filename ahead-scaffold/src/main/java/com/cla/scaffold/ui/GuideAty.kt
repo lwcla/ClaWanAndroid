@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
-import cn.fhstc.utils.ui.load
+import com.cla.wan.utils.ui.load
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cla.scaffold.R
 import com.cla.scaffold.adapter.ImgPagerAdapter

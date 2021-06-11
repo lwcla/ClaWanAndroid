@@ -2,12 +2,15 @@ package com.cla.wan.utils.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.appcompat.widget.AppCompatTextView
+import android.widget.RelativeLayout
 import com.cla.wan.utils.ui.AlphaViewHelper
 import com.cla.wan.utils.ui.AlphaViewInf
 
-class AlphaTextView(context: Context, attr: AttributeSet? = null) :
-    AppCompatTextView(context, attr), AlphaViewInf {
+/**
+ * 按压效果的RelativeLayout
+ */
+class AlphaRelativeLayout(context: Context, attr: AttributeSet? = null) :
+    RelativeLayout(context, attr), AlphaViewInf {
 
     private val alphaViewHelper by lazy { AlphaViewHelper(this) }
 
@@ -28,5 +31,4 @@ class AlphaTextView(context: Context, attr: AttributeSet? = null) :
     override fun setChangeAlphaWhenDisable(var1: Boolean) {
         alphaViewHelper.changeAlphaWhenDisable = var1
     }
-
 }

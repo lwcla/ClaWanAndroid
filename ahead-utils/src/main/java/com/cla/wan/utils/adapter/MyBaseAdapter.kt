@@ -9,7 +9,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-abstract class MyBaseAdapter<T>(context: Context) :
+abstract class MyBaseAdapter<T>(val context: Context) :
     RecyclerView.Adapter<MyBaseViewHolder<T>>() {
 
     val inflater by lazy { LayoutInflater.from(context) }
@@ -85,6 +85,15 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
         val view = itemView.findViewById<T>(id)
         map[id] = view
         view
+    }
+
+    inline fun <reified V : View> clickBean(
+        @IdRes id: Int,
+        crossinline clickListener: T.() -> Unit
+    ) {
+        get<V>(id).setOnClickListener {
+            bean?.apply { clickListener(this) }
+        }
     }
 
     inline fun <reified T : View> click(

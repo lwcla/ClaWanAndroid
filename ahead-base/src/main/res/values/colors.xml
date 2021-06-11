@@ -15,5 +15,7 @@
     <color name="c12">#000000</color>
 
     <color name="color_d8d8d8">#D8D8D8</color>
-
+    <color name="color_ff2650">#FF2650</color>
+    <color name="color_d70110">#D70110</color>
+    <color name="color_ff8000">#FF8000</color>
 </resources>
