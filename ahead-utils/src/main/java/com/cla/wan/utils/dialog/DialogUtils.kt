@@ -2,8 +2,21 @@ package com.cla.wan.utils.dialog
 
 import android.content.Context
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+
+/**
+ * 显示DialogFragment
+ */
+inline fun <reified T : DialogFragment> Fragment?.showDialogFragment(show: (FragmentManager, String) -> Unit) {
+
+    if (this == null) {
+        return
+    }
+
+    (this.requireActivity() as? FragmentActivity?).showDialogFragment<T>(show)
+}
 
 /**
  * 显示DialogFragment

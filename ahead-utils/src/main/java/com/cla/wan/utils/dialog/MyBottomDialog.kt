@@ -18,11 +18,18 @@ abstract class MyBottomDialog : BottomSheetDialogFragment() {
 
     var dismissListener: MyDialogDismissListener? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //设置背景透明，才能显示出layout中诸如圆角的布局，否则会有白色底（框）
+        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme);
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         try {
             val layoutId = getLayoutId()
             if (layoutId != -1) {
