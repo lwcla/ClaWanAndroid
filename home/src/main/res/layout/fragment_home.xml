@@ -7,13 +7,16 @@
     android:background="@color/transparent">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:expanded="true"
             android:background="@color/transparent">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout

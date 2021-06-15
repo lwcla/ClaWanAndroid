@@ -193,6 +193,13 @@ class MainAty : BaseAty() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
+                if (tab?.position == 0) {
+                    //刷新首页
+                    val fragment = tabData[0].second
+                    if (fragment.isInitialized()) {
+                        fragment.value?.refresh()
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {

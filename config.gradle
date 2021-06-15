@@ -72,7 +72,7 @@ ext {
     //下拉刷新swiperefreshlayout https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout
     swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //一个强大并且灵活的RecyclerViewAdapter BaseRecyclerViewAdapterHelper https://github.com/CymChad/BaseRecyclerViewAdapterHelper/blob/master/readme/0-BaseRecyclerViewAdapterHelper.md
-    swiperefreshlayout = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4"
+    base_recycler_view_adapter_helper = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4"
 
     // 注意：分包之后不会有默认的Header和Footer需要手动添加！还是原来的三种方法！
     smart_refresh_version = "2.0.3"

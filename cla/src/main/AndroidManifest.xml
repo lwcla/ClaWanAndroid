@@ -13,6 +13,13 @@
         android:theme="@style/Theme.ClaWanAndroid"
         tools:ignore="AllowBackup">
 
+        <meta-data
+            android:name="com.cla.wan.android.LifeCycleInjector"
+            android:value="@string/lifecycle_proxy" />
+
+        <meta-data
+            android:name="com.cla.wan.android.BuildConfig"
+            android:value="@string/module_info" />
 
     </application>
 

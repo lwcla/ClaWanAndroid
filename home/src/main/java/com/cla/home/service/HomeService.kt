@@ -34,5 +34,5 @@ interface HomeService {
      *  首页文章详情
      */
     @GET(ApiUrl.HOME_ARTICLE_DETAIL)
-    fun loadHomeArticleDetail(@Path("id") id: Int): Call<BaseData<Any>>
+    fun loadHomeArticleDetail(@Path("id") id: Int): Call<String>
 }

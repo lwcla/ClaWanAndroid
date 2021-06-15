@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import java.util.*
+
+typealias OnPreLoad = () -> Int
 
 abstract class MyBaseAdapter<T>(val context: Context) :
     RecyclerView.Adapter<MyBaseViewHolder<T>>() {
@@ -15,19 +18,70 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     val inflater by lazy { LayoutInflater.from(context) }
     val dataList = mutableListOf<T>()
 
+    // 预加载回调
+    var onPreload: OnPreLoad? = null
+
+    // 预加载偏移量
+    var preloadItemCount = -1
+
+    //是否开启预加载，默认为true
+    var preloadEnable = true
+
+    //当前显示的页面下标
+    private var currentPage = -1
+
+    //需要加载的下一页的下标
+    private var nextPage = 0
+
+    // 列表滚动状态
+    private var scrollState = SCROLL_STATE_IDLE
+
     val dataSize: Int
         get() = dataList.size
 
     open fun refreshData(list: List<T>) {
+        setProCount(list)
+        currentPage = -1
+
         dataList.clear()
         dataList.addAll(list)
         notifyDataSetChanged()
     }
 
     open fun addData(list: List<T>) {
+        setProCount(list)
+
         val originalSize = dataList.size
         dataList.addAll(list)
         notifyItemRangeChanged(originalSize, dataSize - originalSize)
+    }
+
+    /**
+     * 加载成功了
+     */
+    fun loadSuccess(page: Int = nextPage) {
+        this.nextPage = page
+    }
+
+    /**
+     * 如果加载失败了，那么就要重新加载下一页才行
+     */
+    fun loadFailed() {
+        this.currentPage = -1
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        if (!preloadEnable) {
+            return
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                // 更新滚动状态
+                scrollState = newState
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyBaseViewHolder<T> {
@@ -37,7 +91,51 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     override fun getItemCount(): Int = dataSize
 
     override fun onBindViewHolder(holder: MyBaseViewHolder<T>, position: Int) {
+        checkPreload(position)
         holder.bind(covertData(dataList[position], position))
+    }
+
+    override fun onBindViewHolder(
+        holder: MyBaseViewHolder<T>,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        checkPreload(position)
+        holder.bind(covertData(dataList[position], position))
+    }
+
+    /**
+     * 设置预加载偏移量，默认是每次加载数据的一半的量
+     */
+    private fun setProCount(list: List<T>) {
+        if (preloadItemCount == -1) {
+            preloadItemCount = (list.size / 3)
+        }
+    }
+
+    // 判断是否进行预加载
+    private fun checkPreload(position: Int) {
+        if (!preloadEnable) {
+            return
+        }
+
+        if (scrollState == SCROLL_STATE_IDLE) {
+            //列表正在滚动
+            return
+        }
+
+        if (position != (itemCount - 1 - preloadItemCount).coerceAtLeast(0)) {
+            // 索引值等于阈值
+            return
+        }
+
+        //有可能还在加载下一页的数据，但是数据还没有返回，这个时候不要重复去加载数据
+        if (nextPage == currentPage) {
+            return
+        }
+
+        currentPage = nextPage
+        nextPage = onPreload?.invoke() ?: 0
     }
 
     abstract fun createHolder(

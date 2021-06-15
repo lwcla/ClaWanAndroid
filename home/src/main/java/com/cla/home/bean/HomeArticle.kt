@@ -17,7 +17,7 @@ data class HomeArticleData(
     val envelopePic: String,
     val fresh: Boolean?,
     val host: String,
-    val id: Int,
+    val id: Int? = -1,
     val link: String,
     val niceDate: String?,
     val niceShareDate: String,
@@ -70,3 +70,5 @@ internal fun HomeArticleData.classText() = StringBuilder().apply {
         append("/").append(chapterName)
     }
 }
+
+internal fun HomeArticleData.detailId() = id ?: -1

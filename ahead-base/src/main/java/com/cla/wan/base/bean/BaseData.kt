@@ -15,11 +15,12 @@ data class BaseData<T>(val data: T?, val errorCode: Int = 0, val errorMsg: Strin
  * {"curPage":1,"datas":[],"offset":0,"over":false,"pageCount":530,"size":20,"total":10589}
  */
 data class BaseListData<T>(
-    val curPage: Int,
+    var curPage: Int,
     val datas: List<T>,
     val offset: Int,
     val over: Boolean,
     val pageCount: Int,
     val size: Int,
-    val total: Long
+    val total: Long,
+    var end: Boolean = false
 )

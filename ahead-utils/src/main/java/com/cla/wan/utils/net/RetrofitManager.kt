@@ -134,8 +134,12 @@ inline fun <reified S, reified T : Any> fetch(
         }
 
         val data = block(service)
-        emit(data.toResource())
-        return@liveData
+        if (data.suc()) {
+            emit(data.toResource())
+            return@liveData
+        }
+
+        data.message
     } catch (e: Exception) {
         e.printStackTrace()
         e.message

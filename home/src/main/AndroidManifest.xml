@@ -2,4 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cla.home">
 
+    <application>
+        <meta-data
+            android:name="com.cla.home.LifeCycleInjector"
+            android:value="@string/lifecycle_proxy" />
+
+        <meta-data
+            android:name="com.cla.home.BuildConfig"
+            android:value="@string/module_info" />
+    </application>
 </manifest>

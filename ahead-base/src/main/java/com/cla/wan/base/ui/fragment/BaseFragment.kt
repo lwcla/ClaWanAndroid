@@ -6,4 +6,7 @@ abstract class BaseFragment : Fragment() {
 
     val fragmentId by lazy { System.currentTimeMillis() }
 
+    open fun refresh(){
+
+    }
 }

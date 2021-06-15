@@ -38,7 +38,9 @@ class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
     ) = create(R.layout.adapter_home_article, parent,
         initHolder = {
             get<HomeTagContainerView>(R.id.llTag).owner = owner
-            click<MaterialCardView>(R.id.cvContent) { bean?.title?.showToast() }
+            click<MaterialCardView>(R.id.cvContent) {
+                bean?.title?.showToast()
+            }
             longClick<MaterialCardView>(R.id.cvContent) {
                 showArticleDetail?.let { show ->
                     bean?.let { data ->

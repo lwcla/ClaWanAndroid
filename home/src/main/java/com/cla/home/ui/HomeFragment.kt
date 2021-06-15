@@ -1,26 +1,28 @@
-package com.cla.home
+package com.cla.home.ui
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.cla.home.R
 import com.cla.home.adapter.HomeArticleAdapter
 import com.cla.home.adapter.HomeBannerAdapter
 import com.cla.home.bean.HomeArticleData
 import com.cla.home.bean.HomeBannerBean
 import com.cla.home.bean.isNullOrEmpty
-import com.cla.home.dialog.HomeArticleDetailDialog
 import com.cla.home.vm.HomeVm
 import com.cla.wan.base.config.HomePath
 import com.cla.wan.base.ui.fragment.LateInitFragment
 import com.cla.wan.utils.adapter.decoration.SpaceItemDecoration
-import com.cla.wan.utils.dialog.showDialogFragment
 import com.cla.wan.utils.net.ResourceState
+import com.google.android.material.appbar.AppBarLayout
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.youth.banner.Banner
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.launch
+
 
 @Route(path = HomePath.HOME_FRAGMENT)
 class HomeFragment : LateInitFragment() {
@@ -31,12 +33,7 @@ class HomeFragment : LateInitFragment() {
 
     private val homeAdapter by lazy {
         HomeArticleAdapter(requireContext(), this).apply {
-            showArticleDetail = { bean ->
-                showDialogFragment<HomeArticleDetailDialog> { manager, s ->
-                    val dialog = HomeArticleDetailDialog()
-                    dialog.show(manager, s)
-                }
-            }
+            onPreload = { loadArticle() }
 
             rvData.layoutManager = LinearLayoutManager(requireContext())
             rvData.addItemDecoration(SpaceItemDecoration(0, 15, 15, 15))
@@ -48,9 +45,22 @@ class HomeFragment : LateInitFragment() {
 
     override fun loadData() {
         homeVm.loadArticle.observe(this, {
-            showContent()
-            refreshLayout.finishLoadMore()
-            homeAdapter.addData(it?.data?.datas ?: emptyList())
+
+            when (it.state) {
+                ResourceState.Success -> {
+                    showContent()
+                    val end = it.data?.over ?: false
+                    refreshLayout.finishLoadMore(0, true, end)
+
+                    homeAdapter.loadSuccess(homeVm.nextPage)
+                    homeAdapter.addData(it?.data?.datas ?: emptyList())
+                }
+
+                ResourceState.Failure -> {
+                    homeAdapter.loadFailed()
+                    refreshLayout.finishLoadMore(false)
+                }
+            }
         })
 
         homeVm.refreshPage.observe(this, {
@@ -73,23 +83,52 @@ class HomeFragment : LateInitFragment() {
                     banner.setCurrentItem(1, false)     //1这才是第一页
                 }
 
-                ResourceState.Failure -> showError()
+                ResourceState.Failure -> {
+                    showError()
+
+                    if (rootView.contentViewShowed) {
+                        refreshLayout.finishRefresh()
+                        refreshLayout.finishLoadMore()
+                    }
+                }
             }
         })
 
-        lifecycleScope.launch {
-            homeVm.refreshHomeData()
-        }
+        refreshPage()
     }
 
     override fun initView() {
-
-        refreshLayout.setRefreshHeader(MaterialHeader(requireContext()))
-        refreshLayout.setRefreshFooter(ClassicsFooter(requireContext()))
-        refreshLayout.setOnRefreshListener { homeVm.refreshHomeData() }
-        refreshLayout.setOnLoadMoreListener { homeVm.loadArticle() }
+        refreshLayout.apply {
+            setRefreshHeader(MaterialHeader(requireContext()))
+            setRefreshFooter(ClassicsFooter(requireContext()))
+            setOnRefreshListener { refreshPage() }
+            setOnLoadMoreListener { loadArticle() }
+        }
 
         banner.addBannerLifecycleObserver(this@HomeFragment)//添加生命周期观察者
         banner.setAdapter(bannerAdapter)
+    }
+
+    private fun loadArticle(): Int {
+        homeVm.loadArticle()
+        return homeVm.nextPage
+    }
+
+    private fun refreshPage() {
+        lifecycleScope.launch { homeVm.refreshHomeData() }
+    }
+
+    override fun refresh() {
+        if (rootView.contentViewShowed) {
+            rvData.scrollToPosition(0)
+            val behavior = (appBarLayout.layoutParams as? CoordinatorLayout.LayoutParams?)?.behavior
+            if (behavior is AppBarLayout.Behavior && behavior.topAndBottomOffset != 0) {
+                behavior.topAndBottomOffset = 0
+            }
+
+            refreshLayout.autoRefresh()
+        } else {
+            refreshPage()
+        }
     }
 }
