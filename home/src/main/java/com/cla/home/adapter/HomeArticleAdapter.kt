@@ -55,7 +55,7 @@ class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
                 get<ImageView>(R.id.ivCollect).collect(this)
             }
 
-        }) { holder ->
+        }) { holder, _ ->
         holder.get<TextView>(R.id.tvAuthor).text = owner()
         holder.get<TextView>(R.id.tvTitle).text = title.formHtml()
         holder.get<TextView>(R.id.tvDate).text = timeByNow()

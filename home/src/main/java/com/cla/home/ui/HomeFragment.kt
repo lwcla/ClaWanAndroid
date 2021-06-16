@@ -33,6 +33,7 @@ class HomeFragment : LateInitFragment() {
 
     private val homeAdapter by lazy {
         HomeArticleAdapter(requireContext(), this).apply {
+            preloadEnable = true
             onPreload = { loadArticle() }
 
             rvData.layoutManager = LinearLayoutManager(requireContext())
@@ -120,13 +121,12 @@ class HomeFragment : LateInitFragment() {
 
     override fun refresh() {
         if (rootView.contentViewShowed) {
+            refreshLayout.autoRefresh()
             rvData.scrollToPosition(0)
             val behavior = (appBarLayout.layoutParams as? CoordinatorLayout.LayoutParams?)?.behavior
             if (behavior is AppBarLayout.Behavior && behavior.topAndBottomOffset != 0) {
                 behavior.topAndBottomOffset = 0
             }
-
-            refreshLayout.autoRefresh()
         } else {
             refreshPage()
         }

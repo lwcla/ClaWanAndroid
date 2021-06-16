@@ -25,7 +25,7 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     var preloadItemCount = -1
 
     //是否开启预加载，默认为true
-    var preloadEnable = true
+    var preloadEnable = false
 
     //当前显示的页面下标
     private var currentPage = -1
@@ -71,10 +71,6 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        if (!preloadEnable) {
-            return
-        }
-
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 // 更新滚动状态
@@ -100,8 +96,12 @@ abstract class MyBaseAdapter<T>(val context: Context) :
         position: Int,
         payloads: MutableList<Any>
     ) {
-        checkPreload(position)
-        holder.bind(covertData(dataList[position], position))
+//        checkPreload(position)
+        if (payloads.isNullOrEmpty()) {
+           onBindViewHolder(holder,position)
+        } else {
+            holder.bind(covertData(dataList[position], position), payloads[0] as String)
+        }
     }
 
     /**
@@ -155,16 +155,16 @@ abstract class MyBaseAdapter<T>(val context: Context) :
         @LayoutRes layoutRes: Int,
         parent: ViewGroup,
         crossinline initHolder: MyBaseViewHolder<T>.() -> Unit = {},
-        crossinline bindData: T.(MyBaseViewHolder<T>) -> Unit
+        crossinline bindData: T.(MyBaseViewHolder<T>, String?) -> Unit
     ) = object : MyBaseViewHolder<T>(inflater.inflate(layoutRes, parent, false)) {
 
         init {
             initHolder()
         }
 
-        override fun bind(t: T) {
+        override fun bind(t: T, payload: String?) {
             this.bean = t
-            t.bindData(this)
+            t.bindData(this, payload)
         }
     }
 }
@@ -175,7 +175,7 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
 
     var bean: T? = null
 
-    abstract fun bind(t: T)
+    abstract fun bind(t: T, payload: String? = null)
 
     inline fun <reified T : View> get(
         @IdRes id: Int
