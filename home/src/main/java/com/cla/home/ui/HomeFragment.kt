@@ -1,7 +1,6 @@
 package com.cla.home.ui
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -12,9 +11,14 @@ import com.cla.home.bean.HomeArticleData
 import com.cla.home.bean.HomeBannerBean
 import com.cla.home.bean.isNullOrEmpty
 import com.cla.home.vm.HomeVm
+import com.cla.wan.base.bean.WebParams
+import com.cla.wan.base.config.BaseConfig
 import com.cla.wan.base.config.HomePath
+import com.cla.wan.base.config.WebPath
 import com.cla.wan.base.ui.fragment.LateInitFragment
 import com.cla.wan.utils.adapter.decoration.SpaceItemDecoration
+import com.cla.wan.utils.app.ARouterUtil
+import com.cla.wan.utils.app.createVm
 import com.cla.wan.utils.net.ResourceState
 import com.google.android.material.appbar.AppBarLayout
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -27,7 +31,7 @@ import kotlinx.coroutines.launch
 @Route(path = HomePath.HOME_FRAGMENT)
 class HomeFragment : LateInitFragment() {
 
-    private val homeVm by lazy { ViewModelProvider(this).get(HomeVm::class.java) }
+    private val homeVm by lazy { createVm<HomeVm>() }
     private val banner by lazy { rootView.findViewById<Banner<HomeBannerBean, HomeBannerAdapter>>(R.id.banner) }
     private val bannerAdapter by lazy { HomeBannerAdapter(requireContext(), emptyList()) }
 
@@ -35,6 +39,11 @@ class HomeFragment : LateInitFragment() {
         HomeArticleAdapter(requireContext(), this).apply {
             preloadEnable = true
             onPreload = { loadArticle() }
+            clickArticle = { data ->
+                ARouterUtil.navigation(WebPath.WEB_ACTIVITY) {
+                    withParcelable(BaseConfig.WEB_PARAMS_KEY, WebParams(data.link))
+                }
+            }
 
             rvData.layoutManager = LinearLayoutManager(requireContext())
             rvData.addItemDecoration(SpaceItemDecoration(0, 15, 15, 15))
@@ -45,15 +54,17 @@ class HomeFragment : LateInitFragment() {
     override fun getLayoutId(): Int = R.layout.fragment_home
 
     override fun loadData() {
+        println("lwl HomeFragment.loadData fragmentId=${fragmentId}")
         homeVm.loadArticle.observe(this, {
 
             when (it.state) {
                 ResourceState.Success -> {
                     showContent()
-                    val end = it.data?.over ?: false
+//                    val end = it.data?.over ?: false
+                    val end = homeVm.nextPage >= 5
                     refreshLayout.finishLoadMore(0, true, end)
 
-                    homeAdapter.loadSuccess(homeVm.nextPage)
+                    homeAdapter.loadSuccess(homeVm.nextPage, end)
                     homeAdapter.addData(it?.data?.datas ?: emptyList())
                 }
 
@@ -79,7 +90,6 @@ class HomeFragment : LateInitFragment() {
                     list.addAll(pageBean!!.topData)
                     list.addAll(pageBean.pageData)
                     homeAdapter.refreshData(list)
-
                     bannerAdapter.setDatas(pageBean.bannerBean)
                     banner.setCurrentItem(1, false)     //1这才是第一页
                 }
@@ -99,9 +109,11 @@ class HomeFragment : LateInitFragment() {
     }
 
     override fun initView() {
+        println("lwl HomeFragment.initView")
         refreshLayout.apply {
             setRefreshHeader(MaterialHeader(requireContext()))
             setRefreshFooter(ClassicsFooter(requireContext()))
+            setEnableLoadMore(false)
             setOnRefreshListener { refreshPage() }
             setOnLoadMoreListener { loadArticle() }
         }
@@ -120,6 +132,7 @@ class HomeFragment : LateInitFragment() {
     }
 
     override fun refresh() {
+        println("lwl HomeFragment.refresh contentViewShowed=${rootView.contentViewShowed}")
         if (rootView.contentViewShowed) {
             refreshLayout.autoRefresh()
             rvData.scrollToPosition(0)

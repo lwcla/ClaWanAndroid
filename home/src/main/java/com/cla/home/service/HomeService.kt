@@ -29,10 +29,4 @@ interface HomeService {
      */
     @GET(ApiUrl.HOME_ARTICLE)
     fun loadHomeData(@Path("page") page: Int): Call<BaseData<BaseListData<HomeArticleData>>>
-
-    /**
-     *  首页文章详情
-     */
-    @GET(ApiUrl.HOME_ARTICLE_DETAIL)
-    fun loadHomeArticleDetail(@Path("id") id: Int): Call<String>
 }

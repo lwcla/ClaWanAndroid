@@ -10,7 +10,7 @@ import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import cn.fhstc.utils.ui.StatusUtils.getStatusBarHeight
+import com.cla.wan.utils.ui.StatusUtils.getStatusBarHeight
 import com.cla.wan.base.R
 import com.cla.wan.utils.app.AppUtils.getScreenWidth
 import com.cla.wan.utils.app.dp2px

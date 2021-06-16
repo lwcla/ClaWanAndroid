@@ -4,6 +4,9 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.cla.wan.utils.config.ModuleInfoHelper
@@ -30,6 +33,9 @@ object AppUtils {
      */
     fun isDebug() = ModuleInfoHelper.impl.readModuleInfo().debug
 }
+
+inline fun <reified T : ViewModel> ViewModelStoreOwner.createVm() =
+    ViewModelProvider(this).get(T::class.java)
 
 /**
  * 使用QMUIDisplayHelper

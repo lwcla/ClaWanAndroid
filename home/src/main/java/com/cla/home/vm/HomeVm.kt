@@ -29,7 +29,9 @@ class HomeVm : ViewModel() {
         }
     }
 
-    val refreshPage = _refreshPage.switchMap { repo.refreshData() }
+    val refreshPage = _refreshPage.switchMap {
+        repo.refreshData().apply { nextPage = 1 }
+    }
 
     fun refreshHomeData() {
         _refreshPage.value = ""

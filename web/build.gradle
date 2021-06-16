@@ -19,13 +19,11 @@ android {
 }
 
 dependencies {
-    implementation config.banner
-
-    implementation config.smart_refresh_layout
-    implementation config.smart_refresh_header_material
-    implementation config.smart_refresh_footer_classics
-    
     implementation config.agentweb
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation config.agentweb_filechooser
     implementation config.agentweb_downloader
 

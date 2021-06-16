@@ -27,10 +27,13 @@ import kotlinx.coroutines.launch
 
 internal typealias ShowArticleDetail = (HomeArticleData) -> Unit
 
+internal typealias ClickArticle = (HomeArticleData) -> Unit
+
 class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
     MyBaseAdapter<HomeArticleData>(context) {
 
     var showArticleDetail: ShowArticleDetail? = null
+    var clickArticle: ClickArticle? = null
 
     override fun createHolder(
         parent: ViewGroup,
@@ -39,7 +42,7 @@ class HomeArticleAdapter(context: Context, private val owner: LifecycleOwner) :
         initHolder = {
             get<HomeTagContainerView>(R.id.llTag).owner = owner
             click<MaterialCardView>(R.id.cvContent) {
-                bean?.title?.showToast()
+                bean?.let { data -> clickArticle?.invoke(data) }
             }
             longClick<MaterialCardView>(R.id.cvContent) {
                 showArticleDetail?.let { show ->

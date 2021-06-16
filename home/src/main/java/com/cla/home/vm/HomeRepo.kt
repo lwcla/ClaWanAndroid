@@ -8,7 +8,6 @@ import com.cla.wan.base.utils.fireBase
 import com.cla.wan.utils.net.CallResult
 import com.cla.wan.utils.net.callAwait
 import com.cla.wan.utils.net.fetch
-import com.cla.wan.utils.net.fire
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -21,11 +20,6 @@ class HomeRepository {
     fun loadHomeData(page: Int) = fireBase<HomeService, BaseListData<HomeArticleData>> {
         loadHomeData(page)
     }
-
-    /**
-     *  首页文章详情
-     */
-    fun loadHomeArticleDetail(id: Int) = fire<HomeService, String> { loadHomeArticleDetail(id) }
 
     /**
      * 刷新

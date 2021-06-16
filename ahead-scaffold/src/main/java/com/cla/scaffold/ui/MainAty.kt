@@ -12,10 +12,11 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import cn.fhstc.utils.ui.statusColor
+import com.cla.wan.utils.ui.statusColor
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cla.scaffold.R
 import com.cla.scaffold.com.cla.scaffold.ui.fragment.Test1Fragment
+import com.cla.scaffold.com.cla.scaffold.vm.MainVm
 import com.cla.wan.base.config.BaseConfig.MAIN_PAGE_EXIT_APP_KEY
 import com.cla.wan.base.config.BaseConfig.MAIN_PAGE_GO_HONE
 import com.cla.wan.base.config.BaseConfig.MAIN_PAGE_GO_MINE
@@ -28,6 +29,7 @@ import com.cla.wan.base.ui.BaseAty
 import com.cla.wan.base.ui.fragment.BaseFragment
 import com.cla.wan.base.utils.Utils
 import com.cla.wan.utils.app.ARouterUtil
+import com.cla.wan.utils.app.createVm
 import com.cla.wan.utils.data.loadData
 import com.cla.wan.utils.ui.toDrawable
 import com.google.android.material.tabs.TabLayout
@@ -62,6 +64,8 @@ class MainAty : BaseAty() {
         }
     }
 
+    private val mainVm by lazy { createVm<MainVm>() }
+
     private val initLayout by lazy {
         //把背景图去掉
         window.decorView.setBackgroundResource(R.color.transparent)
@@ -73,8 +77,14 @@ class MainAty : BaseAty() {
     }
 
     private val inflater by lazy { LayoutInflater.from(this) }
-    private val tabData = mutableListOf<Pair<TabData, Lazy<BaseFragment?>>>()
-    private val initTabData by lazy { initMap() }
+    private val tabData by lazy {
+        val homeFragment = lazy { ARouterUtil.navigation(HomePath.HOME_FRAGMENT) as? BaseFragment? }
+        val myFragment = lazy { Test1Fragment() }
+        listOf(
+            Pair(TabData("首页", R.drawable.sbp_svg_main_home), homeFragment),
+            Pair(TabData("我的", R.drawable.sbp_svg_main_mine), myFragment)
+        )
+    }
     private val initViewPager by lazy { initViewPager() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,31 +156,27 @@ class MainAty : BaseAty() {
 
     private fun initView() {
         initLayout
-        initTabData
         initViewPager
-    }
-
-    private fun initMap() {
-        val homeFragment =
-            lazy { ARouterUtil.navigation(this, HomePath.HOME_FRAGMENT) as? BaseFragment? }
-        val myFragment = lazy { Test1Fragment() }
-
-        val list = listOf(
-            Pair(TabData("首页", R.drawable.sbp_svg_main_home), homeFragment),
-            Pair(TabData("我的", R.drawable.sbp_svg_main_mine), myFragment)
-        )
-
-        tabData.clear()
-        tabData.addAll(list)
     }
 
     @SuppressLint("InflateParams")
     private fun initViewPager() {
+
         viewPager.isUserInputEnabled = true
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = tabData.size
-            override fun createFragment(position: Int): Fragment = tabData[position].second.value
-                ?: Test1Fragment()
+            override fun createFragment(position: Int): Fragment {
+                return tabData[position].second.value ?: Test1Fragment()
+            }
+
+            override fun getItemId(position: Int): Long {
+                val fragmentId = tabData[position].second.value?.fragmentId
+                return fragmentId ?: super.getItemId(position)
+            }
+
+            override fun containsItem(itemId: Long): Boolean {
+                return tabData.map { it.second.value?.fragmentId }.contains(itemId)
+            }
         }
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             val view = inflater.inflate(R.layout.sbp_fragment_main_layout_item, null)

@@ -80,6 +80,7 @@ dependencies {
     implementation project(path: ':ahead-base')
     implementation project(path: ':ahead-scaffold')
     implementation project(path: ':home')
+    implementation project(path: ':web')
 }
 
 static def timeStampVerCode() {

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.core.view.children
 import androidx.core.widget.ContentLoadingProgressBar
-import cn.fhstc.utils.ui.statusColor
+import com.cla.wan.utils.ui.statusColor
 import com.cla.wan.base.R
 import com.cla.wan.base.utils.setC1
 import com.cla.wan.base.widget.MultipleStatusLayout

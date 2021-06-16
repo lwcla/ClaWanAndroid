@@ -1,19 +1,28 @@
 package com.cla.wan.utils.adapter
 
 import android.content.Context
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
+import com.cla.wan.utils.app.dp2px
 import java.util.*
 
 typealias OnPreLoad = () -> Int
 
 abstract class MyBaseAdapter<T>(val context: Context) :
     RecyclerView.Adapter<MyBaseViewHolder<T>>() {
+
+    companion object {
+        const val NORMAL_VIEW = 0x000
+        const val END_VIEW = 0x001
+    }
 
     val inflater by lazy { LayoutInflater.from(context) }
     val dataList = mutableListOf<T>()
@@ -36,12 +45,18 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     // 列表滚动状态
     private var scrollState = SCROLL_STATE_IDLE
 
+    /**
+     * 数据是否已经加载完成
+     */
+    private var over = false
+
     val dataSize: Int
         get() = dataList.size
 
     open fun refreshData(list: List<T>) {
         setProCount(list)
         currentPage = -1
+        over = false
 
         dataList.clear()
         dataList.addAll(list)
@@ -59,7 +74,8 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     /**
      * 加载成功了
      */
-    fun loadSuccess(page: Int = nextPage) {
+    fun loadSuccess(page: Int = nextPage, over: Boolean = false) {
+        this.over = over
         this.nextPage = page
     }
 
@@ -81,10 +97,21 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyBaseViewHolder<T> {
+
+        if (END_VIEW == viewType) {
+            return createOverHolder()
+        }
+
         return createHolder(parent, viewType)
     }
 
-    override fun getItemCount(): Int = dataSize
+    override fun getItemCount(): Int = if (!over) dataSize else dataSize + 1
+
+    override fun getItemViewType(position: Int): Int = if (over && position == dataSize) {
+        END_VIEW
+    } else {
+        NORMAL_VIEW
+    }
 
     override fun onBindViewHolder(holder: MyBaseViewHolder<T>, position: Int) {
         checkPreload(position)
@@ -96,9 +123,16 @@ abstract class MyBaseAdapter<T>(val context: Context) :
         position: Int,
         payloads: MutableList<Any>
     ) {
-//        checkPreload(position)
+
+        if (over && position == dataSize) {
+            if (holder is MyEndViewHolder) {
+                holder.bind()
+            }
+            return
+        }
+
         if (payloads.isNullOrEmpty()) {
-           onBindViewHolder(holder,position)
+            onBindViewHolder(holder, position)
         } else {
             holder.bind(covertData(dataList[position], position), payloads[0] as String)
         }
@@ -116,6 +150,10 @@ abstract class MyBaseAdapter<T>(val context: Context) :
     // 判断是否进行预加载
     private fun checkPreload(position: Int) {
         if (!preloadEnable) {
+            return
+        }
+
+        if (over) {
             return
         }
 
@@ -167,6 +205,28 @@ abstract class MyBaseAdapter<T>(val context: Context) :
             t.bindData(this, payload)
         }
     }
+
+    private fun createOverHolder() = MyEndViewHolder<T>(TextView(context).apply {
+        text = "已经到底了"
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        setPadding(0, 10.dp2px(), 0, 10.dp2px())
+        gravity = Gravity.CENTER
+    })
+}
+
+private class MyEndViewHolder<T>(itemView: View) : MyBaseViewHolder<T>(itemView) {
+
+    fun bind() {
+
+    }
+
+    override fun bind(t: T, payload: String?) {
+
+    }
 }
 
 abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -208,6 +268,8 @@ abstract class MyBaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(ite
         get<T>(id).setOnLongClickListener(clickListener)
     }
 }
+
+
 
 
 

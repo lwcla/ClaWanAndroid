@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingDefaultResource"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <RelativeLayout
+        android:id="@+id/rlLeft"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/rlCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/purple_200" />
+
+    <RelativeLayout
+        android:id="@+id/rlCenter"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/rlRight"
+        app:layout_constraintStart_toEndOf="@id/rlLeft"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/purple_500" />
+
+    <RelativeLayout
+        android:id="@+id/rlRight"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rlCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/teal_200" />
+</merge>

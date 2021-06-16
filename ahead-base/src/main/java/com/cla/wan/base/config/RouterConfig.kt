@@ -8,3 +8,7 @@ object ScaffoldPath {
 object HomePath{
     const val HOME_FRAGMENT ="/home/HomeFragment"
 }
+
+object WebPath{
+    const val WEB_ACTIVITY ="/web/WebAty"
+}

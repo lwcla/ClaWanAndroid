@@ -73,9 +73,15 @@ object ARouterUtil {
      *
      * @param path `path`
      */
-    fun navigation(path: String?): Any? {
+    fun navigation(
+        path: String?,
+        putExtra: Postcard.() -> Unit = {}
+    ): Any? {
         val aRouter = getARouter() ?: return null
-        return aRouter.build(path).navigation()
+
+        val postcard = aRouter.build(path)
+        putExtra.invoke(postcard)
+        return postcard.navigation()
     }
 
     /**

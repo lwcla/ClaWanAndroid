@@ -27,4 +27,9 @@ object BaseConfig {
      */
     const val MAIN_PAGE_GO_MINE = "goMine"
 
+    /**
+     * 传递给web数据
+     */
+    const val WEB_PARAMS_KEY = "web_params_key"
+
 }

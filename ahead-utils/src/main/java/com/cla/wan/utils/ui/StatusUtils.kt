@@ -1,5 +1,6 @@
-package cn.fhstc.utils.ui
+package com.cla.wan.utils.ui
 
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.fragment.app.FragmentActivity
 import com.zackratos.ultimatebarx.ultimatebarx.UltimateBarX
@@ -15,6 +16,14 @@ object StatusUtils {
      */
     fun getStatusBarHeight(): Int {
         return UltimateBarX.getStatusBarHeight()
+    }
+
+
+    /**
+     * 获取状态栏的高度
+     */
+    fun addStatusBarTopPadding(view: View) {
+        UltimateBarX.addStatusBarTopPadding(view)
     }
 }
 
