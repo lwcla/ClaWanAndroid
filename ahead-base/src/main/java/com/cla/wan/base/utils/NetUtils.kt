@@ -1,7 +1,7 @@
 package com.cla.wan.base.utils
 
 import com.cla.wan.base.bean.BaseData
-import com.cla.wan.utils.net.fire
+import com.cla.wan.net.fire
 import retrofit2.Call
 
 inline fun <reified S, reified T : Any> fireBase(

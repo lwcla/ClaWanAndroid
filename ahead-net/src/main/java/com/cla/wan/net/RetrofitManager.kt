@@ -1,11 +1,11 @@
-package com.cla.wan.utils.net
+package com.cla.wan.net
 
 import androidx.lifecycle.liveData
+import com.cla.wan.net.config.NetConfig
 import com.cla.wan.utils.app.AppUtils
 import com.cla.wan.utils.app.MyLog
 import com.cla.wan.utils.app.showToast
 import com.cla.wan.utils.config.ServiceAddressHelper
-import com.cla.wan.utils.config.StartUpConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -205,7 +205,7 @@ private class RetrofitMap {
     //这里就是根据baseUrl来获取不同的map，这个map装的是不同type对应的retrofit
     private val retrofitMap by lazy { mutableMapOf<String, RetrofitTypeMap>() }
 
-    private val startUpConfig by lazy { StartUpConfig.impl }
+    private val netConfig by lazy { NetConfig.impl }
 
     private val gson by lazy { GsonConverterFactory.create() }
     private val loggingInterceptor by lazy {
@@ -290,7 +290,7 @@ private class RetrofitMap {
 
             this.block()
 
-            addInterceptor(startUpConfig.getHeaderInterceptor())
+            netConfig?.getHeaderInterceptor()?.let { addInterceptor(it) }
             addInterceptor(loggingInterceptor)
             addInterceptor(TokenInterceptor())
             hostnameVerifier(TrustAllHostnameVerifier())

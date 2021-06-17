@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
-import com.cla.wan.utils.net.Resource
-import com.cla.wan.utils.net.ResourceState
+import com.cla.wan.net.Resource
+import com.cla.wan.net.ResourceState
 
 class HomeVm : ViewModel() {
 

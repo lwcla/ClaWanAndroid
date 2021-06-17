@@ -1,4 +1,4 @@
-package com.cla.wan.utils.net
+package com.cla.wan.net
 
 import android.webkit.WebSettings
 import com.cla.wan.utils.LifeCycleInjector
@@ -27,7 +27,7 @@ class HeaderInterceptor : Interceptor {
                 "User-Agent",
                 "${WebSettings.getDefaultUserAgent(LifeCycleInjector.appContext)} lzm-version/${verName}"
             )
-            .header("zzstc-appVersion", "$verName")
+            .header("zzstc-appVersion", verName)
             .header("zzstc-osType", "android")
             .header("systemVersion", android.os.Build.VERSION.RELEASE)
             .header("phoneModel", "${android.os.Build.BRAND} /${android.os.Build.MODEL}")

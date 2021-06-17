@@ -27,8 +27,6 @@ dependencies {
 
     api config.androidUtilCode
     api config.screen_auto_size
-    api config.retrofit2
-    api config.retrofit2_gson
 
     implementation config.room_runtime
     implementation config.room_ktx

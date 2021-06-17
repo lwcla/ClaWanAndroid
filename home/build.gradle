@@ -25,10 +25,7 @@ dependencies {
     implementation config.smart_refresh_header_material
     implementation config.smart_refresh_footer_classics
     
-    implementation config.agentweb
-    implementation config.agentweb_filechooser
-    implementation config.agentweb_downloader
-
     implementation project(path: ':ahead-utils')
     implementation project(path: ':ahead-base')
+    implementation project(path: ':ahead-net')
 }

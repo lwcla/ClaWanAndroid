@@ -5,9 +5,8 @@ import com.cla.home.bean.HomePageBean
 import com.cla.home.service.HomeService
 import com.cla.wan.base.bean.BaseListData
 import com.cla.wan.base.utils.fireBase
-import com.cla.wan.utils.net.CallResult
-import com.cla.wan.utils.net.callAwait
-import com.cla.wan.utils.net.fetch
+import com.cla.wan.net.callAwait
+import com.cla.wan.net.fetch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -35,7 +34,7 @@ class HomeRepository {
             val topCall = topThread.await()
             val pageCall = pageThread.await()
 
-            CallResult.join(bannerCall, topCall, pageCall) {
+            com.cla.wan.net.CallResult.join(bannerCall, topCall, pageCall) {
                 val banner = bannerCall.result?.data ?: emptyList()
                 val top = topCall.result?.data ?: emptyList()
                 val page = pageCall.result?.data?.datas ?: emptyList()

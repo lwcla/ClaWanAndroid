@@ -16,10 +16,10 @@ import com.cla.wan.base.config.BaseConfig
 import com.cla.wan.base.config.HomePath
 import com.cla.wan.base.config.WebPath
 import com.cla.wan.base.ui.fragment.LateInitFragment
+import com.cla.wan.net.ResourceState
 import com.cla.wan.utils.adapter.decoration.SpaceItemDecoration
 import com.cla.wan.utils.app.ARouterUtil
 import com.cla.wan.utils.app.createVm
-import com.cla.wan.utils.net.ResourceState
 import com.google.android.material.appbar.AppBarLayout
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
@@ -41,7 +41,7 @@ class HomeFragment : LateInitFragment() {
             onPreload = { loadArticle() }
             clickArticle = { data ->
                 ARouterUtil.navigation(WebPath.WEB_ACTIVITY) {
-                    withParcelable(BaseConfig.WEB_PARAMS_KEY, WebParams(data.link))
+                    withParcelable(BaseConfig.WEB_PARAMS_KEY, WebParams(data.link, data.title))
                 }
             }
 

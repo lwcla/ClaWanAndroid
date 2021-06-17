@@ -79,6 +79,7 @@ dependencies {
     implementation project(path: ':ahead-utils')
     implementation project(path: ':ahead-base')
     implementation project(path: ':ahead-scaffold')
+    implementation project(path: ':ahead-net')
     implementation project(path: ':home')
     implementation project(path: ':web')
 }

@@ -19,6 +19,7 @@ android {
 
 dependencies {
     implementation project(path: ':ahead-utils')
+    implementation project(path: ':ahead-net')
 
     implementation config.gson
     implementation config.eventbus_live

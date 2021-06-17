@@ -1,4 +1,4 @@
-package com.cla.wan.utils.net
+package com.cla.wan.net
 
 import okhttp3.*
 import okhttp3.internal.http.HttpHeaders

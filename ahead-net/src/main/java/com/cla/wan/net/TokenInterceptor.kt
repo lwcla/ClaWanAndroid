@@ -1,4 +1,4 @@
-package com.cla.wan.utils.net
+package com.cla.wan.net
 
 import com.cla.wan.utils.config.ITokenProviderHelper
 import okhttp3.Interceptor

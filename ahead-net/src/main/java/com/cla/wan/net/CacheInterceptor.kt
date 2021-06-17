@@ -1,4 +1,4 @@
-package com.cla.wan.utils.net
+package com.cla.wan.net
 
 import android.os.StatFs
 import com.blankj.utilcode.util.NetworkUtils
