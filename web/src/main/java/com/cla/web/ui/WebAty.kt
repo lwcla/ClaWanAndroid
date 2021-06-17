@@ -7,7 +7,7 @@ import com.cla.wan.base.bean.WebParams
 import com.cla.wan.base.config.BaseConfig
 import com.cla.wan.base.config.WebPath
 import com.cla.wan.base.ui.BaseAty
-import com.cla.wan.utils.widget.initBar
+import com.cla.wan.utils.widget.initTitleBar
 import com.cla.web.R
 import com.just.agentweb.AgentWeb
 import kotlinx.android.synthetic.main.activity_web.*
@@ -35,7 +35,7 @@ class WebAty : BaseAty() {
 
     override fun setup() {
         setContentView(R.layout.activity_web)
-        initBar(titleBar, bgColorRes = R.color.white).resetCenterText(webParams?.title)
+        initTitleBar(titleBar, bgColorRes = R.color.white).resetCenterText(webParams?.title)
         preAgentWeb.go(webParams?.url ?: "")
     }
 

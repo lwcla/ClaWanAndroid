@@ -25,7 +25,7 @@ import com.cla.wan.utils.ui.statusColor
 import com.cla.wan.utils.ui.toDrawable
 import kotlinx.android.synthetic.main.layout_custom_top_bar.view.*
 
-inline fun FragmentActivity.initBar(
+inline fun FragmentActivity.initTitleBar(
     titleBar: CustomTitleBar,
     @Nullable @StringRes centerTextRes: Int? = null,
     @Nullable @ColorRes centerTextColor: Int = R.color.color_333333,
@@ -38,7 +38,7 @@ inline fun FragmentActivity.initBar(
 ): TitleBarWrapper = titleBar.run {
 
     //设置标题栏中间的文字
-    val centerText = TextView(this@initBar)
+    val centerText = TextView(this@initTitleBar)
     centerText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.toFloat())
     centerText.typeface = Typeface.defaultFromStyle(Typeface.BOLD)//加粗
     if (centerTextRes != null) {
@@ -64,10 +64,10 @@ inline fun FragmentActivity.initBar(
     rlCenter.addView(centerText, cusParams)
 
     //设置标题栏左边的返回图标
-    val leftImageView = AlphaImageButton(this@initBar)
+    val leftImageView = AlphaImageButton(this@initTitleBar)
     leftImageView.scaleType = ImageView.ScaleType.FIT_XY
     leftImageView.setImageDrawable(
-        R.drawable.svg_navigation.toDrawable(this@initBar, backImageColor)
+        R.drawable.svg_navigation.toDrawable(this@initTitleBar, backImageColor)
     )
     leftImageView.setBackgroundResource(R.color.transparent)
     leftImageView.setOnClickListener { finish() }
@@ -83,7 +83,7 @@ inline fun FragmentActivity.initBar(
     rlLeft.addView(leftImageView, params)
 
     //设置标题栏右边的文字
-    val rightText = AlphaTextView(this@initBar)
+    val rightText = AlphaTextView(this@initTitleBar)
     rightText.setTextColor(colorValue(rightTextColor))
     if (rightTextRes != null) {
         rightText.text = getString(rightTextRes)
