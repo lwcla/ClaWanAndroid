@@ -31,7 +31,7 @@ object AppUtils {
     /**
      * 是否debug模式
      */
-    fun isDebug() = ModuleInfoHelper.impl.readModuleInfo().debug
+    fun isDebug() = ModuleInfoHelper.readModuleInfo().debug
 }
 
 inline fun <reified T : ViewModel> ViewModelStoreOwner.createVm() =

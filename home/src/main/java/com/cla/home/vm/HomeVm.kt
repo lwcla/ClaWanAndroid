@@ -2,10 +2,7 @@ package com.cla.home.vm
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
-import com.cla.wan.net.Resource
-import com.cla.wan.net.ResourceState
 
 class HomeVm : ViewModel() {
 
@@ -16,16 +13,11 @@ class HomeVm : ViewModel() {
     private val _refreshPage = MutableLiveData<Any>()
 
     val loadArticle = _loadArticle.switchMap { nextPage ->
-        repo.loadHomeData(nextPage).map {
-
-            val listContainer = it.data?.data
-            val curPage = listContainer?.curPage ?: 0
-
-            if (it.state == ResourceState.Success) {
-                this.nextPage = curPage
-            }
-
-            Resource(state = it.state, data = listContainer, code = it.code, message = it.message)
+        repo.loadHomeData(nextPage) {
+            val listContainer = it
+            val curPage = listContainer.curPage
+            println("lwl HomeVm.nextPage=${this@HomeVm.nextPage} curPage=$curPage")
+            this@HomeVm.nextPage = curPage
         }
     }
 

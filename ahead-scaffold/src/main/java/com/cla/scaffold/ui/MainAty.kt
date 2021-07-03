@@ -12,7 +12,6 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.cla.wan.utils.ui.statusColor
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cla.scaffold.R
 import com.cla.scaffold.com.cla.scaffold.ui.fragment.Test1Fragment
@@ -30,7 +29,8 @@ import com.cla.wan.base.ui.fragment.BaseFragment
 import com.cla.wan.base.utils.Utils
 import com.cla.wan.utils.app.ARouterUtil
 import com.cla.wan.utils.app.createVm
-import com.cla.wan.utils.data.loadData
+import com.cla.wan.utils.data.loadBool
+import com.cla.wan.utils.ui.statusColor
 import com.cla.wan.utils.ui.toDrawable
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -95,7 +95,7 @@ class MainAty : BaseAty() {
 
     override fun setup() {
         //用户是否同意协议
-        val isAgree = SpKey.USER_AGREE_ALL_PROTOCOL.loadData()
+        val isAgree = SpKey.USER_AGREE_ALL_PROTOCOL.loadBool()
         if (!isAgree) {
             //GuideActivity是透明的，所以这里需要设置背景图
             window.decorView.setBackgroundResource(R.drawable.splash)
@@ -162,7 +162,7 @@ class MainAty : BaseAty() {
     @SuppressLint("InflateParams")
     private fun initViewPager() {
 
-        viewPager.isUserInputEnabled = true
+        viewPager.isUserInputEnabled = false
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = tabData.size
             override fun createFragment(position: Int): Fragment {

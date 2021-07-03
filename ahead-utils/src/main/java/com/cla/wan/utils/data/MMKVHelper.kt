@@ -5,6 +5,14 @@ import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.cla.wan.utils.LifeCycleInjector
 import com.cla.wan.utils.app.MyLog
+import com.cla.wan.utils.data.MMKVHelper.decodeBoolean
+import com.cla.wan.utils.data.MMKVHelper.decodeByteArray
+import com.cla.wan.utils.data.MMKVHelper.decodeDouble
+import com.cla.wan.utils.data.MMKVHelper.decodeFloat
+import com.cla.wan.utils.data.MMKVHelper.decodeInt
+import com.cla.wan.utils.data.MMKVHelper.decodeLong
+import com.cla.wan.utils.data.MMKVHelper.decodeString
+import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -17,13 +25,56 @@ fun String.saveData(
     MMKVHelper.saveData(this@saveData, this, listener)
 } ?: false
 
+/**
+ * 根据key加载数据
+ */
+
+fun String.removeValueForKey() = MMKVHelper.removeValueForKey(this)
+fun String.removeKey() = MMKVHelper.removeKey(this)
 
 /**
  * 根据key加载数据
  */
-fun String.loadData(
-    defaultValue: Boolean = false
-) = MMKVHelper.decodeBoolean(this, defaultValue)
+fun String.loadInt(defaultValue: Int = 0) = decodeInt(this, defaultValue)
+fun String.loadBool(defaultValue: Boolean = false) = decodeBoolean(this, defaultValue)
+
+/**
+ * 根据key加载数据
+ */
+inline fun <reified T> String.loadData(
+    defaultValue: T? = null
+): T = when (T::class.java) {
+    java.lang.Integer::class.java -> decodeInt(this, (defaultValue ?: 0) as Int) as T
+    java.lang.Boolean::class.java -> decodeBoolean(this, (defaultValue ?: false) as Boolean) as T
+    java.lang.String::class.java -> decodeString(this, (defaultValue ?: "") as String) as T
+    java.lang.Float::class.java -> decodeFloat(this, (defaultValue ?: 0f) as Float) as T
+    java.lang.Long::class.java -> decodeLong(this, (defaultValue ?: 0L) as Long) as T
+    java.lang.Double::class.java -> decodeDouble(this, (defaultValue ?: 0.0) as Double) as T
+    java.lang.Byte::class.java -> decodeByteArray(this, byteArrayOf()) as T
+    else -> throw RuntimeException("类型不支持")
+}
+
+/**
+ * 根据key加载对象
+ */
+inline fun <reified T> String.loadObj(): T? = this.loadData<String>().run {
+    if (isNullOrBlank()) {
+        null
+    } else {
+        try {
+            GsonUtils.fromJson<T>(this, object : TypeToken<T>() {}.type)
+        } catch (e: Exception) {
+            null
+        }
+    }
+}
+
+/**
+ * 根据key加载数据
+ */
+inline fun <reified T : Parcelable> String.loadData(): T? {
+    return MMKVHelper.decodeParcelable(this, T::class.java)
+}
 
 
 /**
@@ -90,7 +141,6 @@ object MMKVHelper {
         }
     }
 
-
     /**
      * @param key 存储数据的key
      * @param value 存储的数据 value
@@ -130,13 +180,6 @@ object MMKVHelper {
         return result ?: false
     }
 
-    inline fun <reified T> encodeObj(key: String): T? = decodeString(key).run {
-        if (isBlank()) {
-            null
-        } else {
-            GsonUtils.fromJson(this, T::class.java)
-        }
-    }
 
     fun <T : Parcelable> encode(key: String, t: T?) {
         if (t == null) {
@@ -151,7 +194,6 @@ object MMKVHelper {
         }
         instance?.encode(key, sets)
     }
-
 
     fun decodeInt(key: String, defaultValue: Int = 0): Int {
         val decodeInt = instance?.decodeInt(key, defaultValue)
@@ -183,8 +225,8 @@ object MMKVHelper {
         return decodeFloat ?: defaultValue
     }
 
-    fun decodeByteArray(key: String): ByteArray? {
-        val decodeBytes = instance?.decodeBytes(key)
+    fun decodeByteArray(key: String, defaultValue: ByteArray = byteArrayOf()): ByteArray? {
+        val decodeBytes = instance?.decodeBytes(key, defaultValue)
         MyLog.i(javaClass.name, "decodeByteArray key=$key value=$decodeBytes")
         return decodeBytes
     }
@@ -209,6 +251,10 @@ object MMKVHelper {
 
     fun removeKey(key: String) {
         MyLog.i(javaClass.name, "removeKey ")
+        instance?.removeValueForKey(key)
+    }
+
+    fun removeValueForKey(key: String) {
         instance?.removeValueForKey(key)
     }
 

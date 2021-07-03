@@ -1,6 +1,6 @@
 package com.cla.wan.net
 
-import com.cla.wan.utils.config.ITokenProviderHelper
+import com.cla.wan.net.config.ITokenProviderHelper
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.util.concurrent.locks.ReentrantLock

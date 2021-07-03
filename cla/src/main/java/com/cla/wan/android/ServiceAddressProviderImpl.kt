@@ -2,17 +2,17 @@ package com.cla.wan.android
 
 import android.content.Context
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.cla.wan.net.config.AddressType
+import com.cla.wan.net.config.IServiceAddressProvider
+import com.cla.wan.net.config.RouterHostPath
+import com.cla.wan.net.config.ServiceAddressEntity
+import com.cla.wan.net.utils.ServiceAddressUtil
 import com.cla.wan.utils.app.AppUtils
-import com.cla.wan.utils.config.AddressType
-import com.cla.wan.utils.config.HostPath
-import com.cla.wan.utils.config.ServiceAddressEntity
-import com.cla.wan.utils.config.ServiceAddressProvider
 
-@Route(path = HostPath.SERVICE_ADDRESS_PROVIDER_IMPL)
-class ServiceAddressProviderImpl : ServiceAddressProvider {
+@Route(path = RouterHostPath.SERVICE_ADDRESS_PROVIDER_IMPL)
+class ServiceAddressProviderImpl : IServiceAddressProvider {
 
     companion object {
-        private const val DEFAULT_URL = "https://www.wanandroid.com"
         private val debug = AppUtils.isDebug()
 
         private val addressList =
@@ -23,9 +23,15 @@ class ServiceAddressProviderImpl : ServiceAddressProvider {
                 ServiceAddressEntity("https://www.wanandroid.com", AddressType.PRODUCTION, !debug),
                 ServiceAddressEntity("https://www.wanandroid.com", AddressType.TEST, false)
             )
+
+        private val DEFAULT_URL = addressList[0].address
     }
 
     override fun baseUrl(): String = addressList.find { it.active }?.address ?: DEFAULT_URL
+
+    override fun getServiceAddress(): List<ServiceAddressEntity> = addressList
+
+    override fun getActiveUrl(): String = ServiceAddressUtil.getActiveUrl()
 
     override fun init(context: Context?) {
 

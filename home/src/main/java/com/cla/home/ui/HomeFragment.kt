@@ -1,5 +1,7 @@
 package com.cla.home.ui
 
+import android.os.Bundle
+import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +18,8 @@ import com.cla.wan.base.config.BaseConfig
 import com.cla.wan.base.config.HomePath
 import com.cla.wan.base.config.WebPath
 import com.cla.wan.base.ui.fragment.LateInitFragment
-import com.cla.wan.net.ResourceState
+import com.cla.wan.net.fail
+import com.cla.wan.net.success
 import com.cla.wan.utils.adapter.decoration.SpaceItemDecoration
 import com.cla.wan.utils.app.ARouterUtil
 import com.cla.wan.utils.app.createVm
@@ -30,6 +33,10 @@ import kotlinx.coroutines.launch
 
 @Route(path = HomePath.HOME_FRAGMENT)
 class HomeFragment : LateInitFragment() {
+
+    companion object {
+        private const val REFRESH_DATA = "refresh_data"
+    }
 
     private val homeVm by lazy { createVm<HomeVm>() }
     private val banner by lazy { rootView.findViewById<Banner<HomeBannerBean, HomeBannerAdapter>>(R.id.banner) }
@@ -53,59 +60,60 @@ class HomeFragment : LateInitFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_home
 
-    override fun loadData() {
-        println("lwl HomeFragment.loadData fragmentId=${fragmentId}")
-        homeVm.loadArticle.observe(this, {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            when (it.state) {
-                ResourceState.Success -> {
-                    showContent()
-//                    val end = it.data?.over ?: false
-                    val end = homeVm.nextPage >= 5
-                    refreshLayout.finishLoadMore(0, true, end)
+        homeVm.loadArticle.observe(viewLifecycleOwner, {
+            println("lwl HomeFragment.loadData resource state=${it.state}")
+            it.success {
+                showContent()
+                val end = it.data?.over ?: false
+                refreshLayout.finishRefresh()
+                refreshLayout.finishLoadMore(0, true, end)
 
-                    homeAdapter.loadSuccess(homeVm.nextPage, end)
-                    homeAdapter.addData(it?.data?.datas ?: emptyList())
-                }
-
-                ResourceState.Failure -> {
+                homeAdapter.loadSuccess(homeVm.nextPage, end)
+                homeAdapter.addData(it?.data?.datas ?: emptyList())
+            }.fail {
+                if (rootView.contentViewShowed) {
                     homeAdapter.loadFailed()
                     refreshLayout.finishLoadMore(false)
                 }
             }
         })
 
-        homeVm.refreshPage.observe(this, {
-            when (it.state) {
-                ResourceState.Success -> {
-                    val pageBean = it.data
-                    if (pageBean.isNullOrEmpty()) {
-                        showEmpty()
-                        return@observe
-                    }
+        homeVm.refreshPage.observe(viewLifecycleOwner, {
 
-                    showContent()
-                    refreshLayout.finishRefresh()
-                    val list = mutableListOf<HomeArticleData>()
-                    list.addAll(pageBean!!.topData)
-                    list.addAll(pageBean.pageData)
-                    homeAdapter.refreshData(list)
-                    bannerAdapter.setDatas(pageBean.bannerBean)
-                    banner.setCurrentItem(1, false)     //1这才是第一页
+            it.success {
+                val pageBean = it.data
+                if (pageBean.isNullOrEmpty()) {
+                    showEmpty()
+                    return@observe
                 }
 
-                ResourceState.Failure -> {
-                    showError()
+                showContent()
+                refreshLayout.finishRefresh()
+                refreshLayout.finishLoadMore()
 
-                    if (rootView.contentViewShowed) {
-                        refreshLayout.finishRefresh()
-                        refreshLayout.finishLoadMore()
-                    }
+                val list = mutableListOf<HomeArticleData>()
+                list.addAll(pageBean!!.topData)
+                list.addAll(pageBean.pageData)
+                homeAdapter.refreshData(list)
+                bannerAdapter.setDatas(pageBean.bannerBean)
+                banner.setCurrentItem(1, false)     //1这才是第一页
+            }.fail {
+                showError()
+
+                if (rootView.contentViewShowed) {
+                    refreshLayout.finishRefresh()
+                    refreshLayout.finishLoadMore()
                 }
             }
         })
+    }
 
-        refreshPage()
+    override fun loadData() {
+        println("lwl HomeFragment.loadData fragmentId=${fragmentId}")
+        launch(REFRESH_DATA) { refreshPage() }
     }
 
     override fun initView() {
@@ -123,6 +131,7 @@ class HomeFragment : LateInitFragment() {
     }
 
     private fun loadArticle(): Int {
+        println("lwl HomeFragment.loadArticle nextPage=${homeVm.nextPage}")
         homeVm.loadArticle()
         return homeVm.nextPage
     }

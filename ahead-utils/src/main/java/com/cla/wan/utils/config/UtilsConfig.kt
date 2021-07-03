@@ -5,9 +5,7 @@ object UtilsPath {
 }
 
 object HostPath {
-    const val TOKEN_SERVICE = "/host/ITokenProviderImpl"
     const val START_UP_CONFIG_IMPL = "/host/StartUpConfigImpl"
-    const val SERVICE_ADDRESS_PROVIDER_IMPL = "/host/ServiceAddressProviderImpl"
     const val APP_VERSION_SERVICE = "/host/IModuleInfoProviderImpl"
 }
 
