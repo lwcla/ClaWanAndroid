@@ -37,6 +37,28 @@ object RequestEt {
      * @param call 请求数据的方法
      */
     fun <Service, ResponseType, ReturnType> request(
+        cls: Class<Service>,
+        call: suspend (Service.() -> CallResult<ResponseType>),
+        mapResult: CallResult<ResponseType>.(RequestBuilder<Service, ResponseType, ReturnType>) -> Resource<ReturnType>,
+        builder: RequestBuilder<Service, ResponseType, ReturnType>.() -> Unit = {}
+    ) = request(
+        createService = { type, baseUrl -> RetrofitManager.create(cls, type, baseUrl) },
+        call = call,
+        mapResult = mapResult,
+        builder = builder
+    )
+
+    /**
+     * liveData的方式请求数据
+     *
+     * @param Service Retrofit的Service
+     * @param ResponseType 网络请求时返回的数据类型
+     * @param ReturnType 实际上返回的数据类型
+     *
+     * @param mapResult  通过这个方法可以把 [ResponseType]类型的 的数据转换为 [ReturnType]类型 的数据，并且返回的是[Resource]数据，eg:CallResult<BaseBean<String>> -> Resource<String> ,去掉了BaseBean这一层
+     * @param call 请求数据的方法
+     */
+    fun <Service, ResponseType, ReturnType> request(
         createService: (RetrofitType, String) -> Service,
         call: suspend (Service.() -> CallResult<ResponseType>),
         mapResult: CallResult<ResponseType>.(RequestBuilder<Service, ResponseType, ReturnType>) -> Resource<ReturnType>,
